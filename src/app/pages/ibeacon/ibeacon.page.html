@@ -1,3 +1,26 @@
+<ion-content [fullscreen]="true">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title size="large" class="ion-text-center">Beacon Scanner</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- progressbar -->
+  <ion-progress-bar type="indeterminate" [style.display]="scanStatus ? 'block' : 'none'"></ion-progress-bar>
+
+  <ion-item-divider color="primary">
+    <ion-label style="max-width: 290px;">
+      <b>{{scanStatus?"Scanning for nearby beacons":"Press play to start scanning."}} </b>
+    </ion-label>
+    <ion-spinner name="lines-small" color="light" [style.display]="scanStatus ? 'block' : 'none'"></ion-spinner>
+  </ion-item-divider>
+
+  <!--   <ion-item>
+    <ion-label>UUID: </ion-label>
+    <ion-input value={{uuid}}></ion-input>
+    <ion-button style="width: 20%;" (click)="onStartClicked()">Scan</ion-button>
+  </ion-item> -->
+
   <ion-card *ngFor="let beacon of beaconData; let i = index ">
     <ion-card-content style="padding: 2px;">
       <ion-item>
@@ -31,3 +54,5 @@
         <ion-icon [name]='scanStatus ? "pause-sharp" : "play-sharp"' style="font-size: 25px;"></ion-icon>
       </ion-fab-button>
     </ion-fab>
+
+  </ion-content>
