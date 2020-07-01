@@ -1,0 +1,27 @@
+  <ion-card *ngFor="let beacon of beaconData; let i = index ">
+    <ion-card-content style="padding: 2px;">
+      <ion-item>
+        <ion-label>
+          <h1>iBeacon</h1>
+        </ion-label>
+        <ion-label style="text-align: right;">
+          <h1>No. {{i+1}}</h1>
+        </ion-label>
+      </ion-item>
+
+      <ion-item-divider style="min-height: 1px; "> </ion-item-divider>
+
+      <ion-item>
+        <ion-label><b>UUID</b> <br> {{beacon.uuid}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label><b>Major</b> <br> {{beacon.major}}</ion-label>
+        <ion-label><b>Minor</b> <br> {{beacon.minor}}</ion-label>
+        <ion-label><b>RSSI</b> <br> {{beacon.rssi}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label><b>Distance</b> <br> {{beacon.accuracy}} m</ion-label>
+        <ion-label><b>TX</b> <br> {{beacon.tx}}</ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
