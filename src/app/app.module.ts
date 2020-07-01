@@ -33,6 +33,8 @@ import { MultipleChoiceTextComponent } from './pages/create-game/form-elements/m
 
 import { TypeToTextPipe } from './pipes/typeToText.pipe';
 
+// IBeacon
+import { IBeacon } from '@ionic-native/ibeacon/ngx';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -92,7 +94,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    DeviceOrientation,
+    DeviceOrientation,IBeacon,
   ],
   bootstrap: [AppComponent]
 })

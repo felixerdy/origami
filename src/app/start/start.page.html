@@ -55,6 +55,17 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card (click)=navigateDetectIBeaconPage()>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="search-outline"></ion-icon> IBeacon detection
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Nur zum testen
+    </ion-card-content>
+  </ion-card>
+
   <div class="ion-text-center" *ngIf="device">
     <p>
       {{device.appVersion}} ({{device.appBuild}})

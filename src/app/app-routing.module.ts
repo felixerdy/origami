@@ -21,6 +21,10 @@ const routes: Routes = [
   { path: 'info', loadChildren: () => import('./pages/info/info.module').then(m => m.InfoPageModule) },
   { path: 'showroom', loadChildren: () => import('./pages/showroom/showroom/showroom.module').then(m => m.ShowroomPageModule) },
   { path: 'task-showroom', loadChildren: () => import('./pages/showroom/task-showroom/task-showroom.module').then(m => m.TaskShowroomPageModule) },
+  {
+    path: 'ibeacon',
+    loadChildren: () => import('./pages/ibeacon/ibeacon.module').then( m => m.IbeaconPageModule)
+  },
 ];
 @NgModule({
   imports: [

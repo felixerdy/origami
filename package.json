@@ -29,6 +29,7 @@
     "@ionic-native/core": "^5.24.0",
     "@ionic-native/device-orientation": "^5.26.0",
     "@ionic-native/file-transfer": "^5.24.0",
+    "@ionic-native/ibeacon": "^5.27.0",
     "@ionic/angular": "^5.0.7",
     "@ionic/pwa-elements": "^1.5.2",
     "@ionic/storage": "^2.2.0",
@@ -45,6 +46,7 @@
     "cordova-plugin-device-orientation": "^2.0.1",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-file-transfer": "^1.7.1",
+    "cordova-plugin-ibeacon": "^3.8.1",
     "core-js": "^3.6.5",
     "es6-promise-plugin": "^4.2.2",
     "jetifier": "^1.6.5",
@@ -95,7 +97,8 @@
     "plugins": {
       "cordova-plugin-device-orientation": {},
       "cordova-plugin-file": {},
-      "cordova-plugin-file-transfer": {}
+      "cordova-plugin-file-transfer": {},
+      "com.unarin.cordova.beacon": {}
     },
     "platforms": [
       "android",
