@@ -15,25 +15,31 @@
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Navigationsaufgabe verlangen das Navigieren zu einem neuen Ort.</p>
+      <p><b>Navigationsaufgaben</b> leiten den Spieler an neue Orte.<br><br></p>
        
         <ion-chip color="primary">
           <ion-label><ion-icon name="navigate"></ion-icon> Navigation zur Zielfahne</ion-label>
         </ion-chip>
-        <ion-grid><ion-row>
-          <ion-col><b>Platz für ein Bild</b></ion-col>
-          <ion-col>Der nächste Zielpunkt ist mit einem Zielfähnchen auf der Karte markiert.</ion-col>
-        </ion-row></ion-grid>
-
+        <p><br>Bei der <b>Navigation zur Zielfahne</b> sieht der Spieler eine Fahne auf der Karte, die einen Zielort
+          markiert. Seine Aufgabe ist es, zu diesem Ort zu gehen.<br><br></p>
+        
         <ion-chip color="primary">
           <ion-label><ion-icon name="navigate"></ion-icon> Navigation mit Richtungspfeil</ion-label>
         </ion-chip>
-          <ion-grid><ion-row><ion-col>Der Spieler wird mittels Richtungspfeil und Entfernungsangabe zum nächsten Zielpunkt geleitet. Die Karte wird ausgeblendet.</ion-col></ion-row></ion-grid>
+        <p><br>Die <b>Navigation mit Richtungspfeil</b> ist eine Navigation mit Pfeil und eine Distanzangabe, die dem Spieler die
+          Richtung zum nächsten Zielort weist. Die Karte ist dabei nicht sichtbar.<br><br></p>
       
         <ion-chip color="primary">
           <ion-label><ion-icon name="navigate"></ion-icon> Navigation mit Textanweisung</ion-label>
         </ion-chip>
-          <ion-grid><ion-row><ion-col>Der Spieler wird mittels Textanweisung zum nächsten Zielpunkt geleitet.</ion-col></ion-row></ion-grid>
+        <p><br>Bei der <b>Navigation mit Textanweisung</b> bekommt der Spieler eine genaue Navigationsanweisung zum nächsten
+          Zielort.<br><br></p>
+
+        <ion-chip color="primary">
+          <ion-label><ion-icon name="navigate"></ion-icon> Navigation mit Foto</ion-label>
+        </ion-chip>
+        <p><br>Der Aufgabentyp <b>Navigation mit Foto</b> navigiert den Spieler mittels Foto zum nächsten Ziel.<br><br></p>
+
       </ion-card-content>
     </ion-card>
 
@@ -44,32 +50,45 @@
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <p>Themenaufgaben sind ortsgebundene Aufgaben zum Kartenlesenlernen oder beliebigen anderen Themen.</p>
+        <p><b>Themenaufgaben</b> sind ortsgebundene Aufgaben mit unterschiedlichem thematischem Inhalt.</p>
          
           <ion-chip color="secondary">
             <ion-label><ion-icon name="clipboard"></ion-icon> Selbst-Lokalisation</ion-label>
           </ion-chip>
-          <ion-grid><ion-row>
-            <ion-col><b>Platz für ein Bild</b></ion-col>
-            <ion-col> Text</ion-col>
-          </ion-row></ion-grid>
+          <p><br>Bei der <b>Selbst-Lokalisation</b> muss der Spieler seine aktuelle Position auf der Karte finden.<br><br></p>
   
           <ion-chip color="secondary">
             <ion-label><ion-icon name="clipboard"></ion-icon> Objekt-Lokalisation</ion-label>
           </ion-chip>
-          <ion-grid><ion-row>
-            <ion-col><b>Platz für ein Bild</b></ion-col>
-            <ion-col> Text</ion-col>
-          </ion-row></ion-grid>
+          <p><br>Der Aufgabentyp <b>Objekt-Lokalisation</b> umfasst das Zuordnen von Objekte der Karte zu Objekten der Umgebung
+            und umgekehrt.<br><br></p>
 
           <ion-chip color="secondary">
             <ion-label><ion-icon name="clipboard"></ion-icon> Richtungsbestimmung</ion-label>
           </ion-chip>
-          <ion-grid><ion-row>
-            <ion-col><b>Platz für ein Bild</b></ion-col>
-            <ion-col> Text</ion-col>
-          </ion-row></ion-grid>
+          <p><br>Bei der <b>Richtungsbestimmung</b> muss der Spieler seine Blickrichtung mit der Ausrichtung der Karte in
+            Verbindung bringen.<br><br></p>
+
+          <ion-chip color="secondary">
+            <ion-label><ion-icon name="clipboard"></ion-icon> Freie Aufgaben</ion-label>
+          </ion-chip>
+          <p><br>In <b>Freien Aufgaben</b> können Frage- und Antworttypen der Aufgabe frei kombiniert werden. Auf diese Weise
+            können zum Beispiel Quiz- und Sachaufgaben gestellt werden.<br><br></p>
+
         </ion-card-content>
       </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="information-circle-outline" color="warning"></ion-icon> Informationen
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Über den Baustein <b>Information</b> können dem Spieler Hinweise und Tipps gegeben werden.</p>
+          <p>Neben reinen Textinformationen können Audioaufnahmen und demnächst auch Videoaufnahmen eingebunden werden. 
+            Außerdem besteht die Möglichkeit, <b>Kartenfeatures</b> zu nutzen und gezielt einzuführen.</p>
+          </ion-card-content>
+        </ion-card>
 
 </ion-content>
