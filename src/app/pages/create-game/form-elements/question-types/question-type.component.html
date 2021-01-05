@@ -1,124 +1,275 @@
 <div
-    *ngIf="question.type != questionTypeEnum.NAV_INSTRUCTION && question.type != questionTypeEnum.NAV_INSTRUCTION_PHOTO">
-    <h5>Aufgabenstellung
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Diese Aufgabenstellung wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <ion-textarea autoGrow [(ngModel)]="question.text"></ion-textarea>
+  *ngIf="
+    question.type != questionTypeEnum.NAV_INSTRUCTION &&
+    question.type != questionTypeEnum.NAV_INSTRUCTION_PHOTO
+  "
+>
+  <h5>
+    Aufgabenstellung
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover($event, 'Diese Aufgabenstellung wird im Spiel angezeigt.')
+      "
+    >
+    </ion-icon>
+  </h5>
+  <ion-textarea autoGrow [(ngModel)]="question.text"></ion-textarea>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.NAV_INSTRUCTION">
-    <h5>Navigationsanweisung
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Füge hier eine genaue Wegbeschreibung ein. Diese wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <ion-textarea autoGrow [(ngModel)]="question.text"></ion-textarea>
+  <h5>
+    Navigationsanweisung
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Füge hier eine genaue Wegbeschreibung ein. Diese wird im Spiel angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <ion-textarea autoGrow [(ngModel)]="question.text"></ion-textarea>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.NAV_INSTRUCTION_PHOTO">
-    <h5>Foto <ion-icon name="information-circle" (click)="showPopover($event, 'Dieses Foto wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <app-photo-upload [(photo)]="question.photo" [taskType]="taskType" theme="primary"></app-photo-upload>
-    <h5>Navigationsanweisung
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Füge hier eine genaue Wegbeschreibung ein. Diese wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <ion-textarea autoGrow [(ngModel)]="question.text"></ion-textarea>
+  <h5>
+    Foto
+    <ion-icon
+      name="information-circle"
+      (click)="showPopover($event, 'Dieses Foto wird im Spiel angezeigt.')"
+    >
+    </ion-icon>
+  </h5>
+  <app-photo-upload
+    [(photo)]="question.photo"
+    [(video)]="question.video"
+    [taskType]="taskType"
+    theme="primary"
+  ></app-photo-upload>
+  <h5>
+    Navigationsanweisung
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Füge hier eine genaue Wegbeschreibung ein. Diese wird im Spiel angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <ion-textarea autoGrow [(ngModel)]="question.text"></ion-textarea>
 </div>
 
 <div>
-    <h5>Audiobotschaft
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Die Aufgabenstellung kann auch als Audiobotschaft abgespielt werden. Klicke auf den Record Button um eine Audiobotschaft aufzunehmen.')">
-        </ion-icon>
-    </h5>
-    <app-audio-recorder [(audioSource)]="question.audio"></app-audio-recorder>
+  <h5>
+    Audiobotschaft
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Die Aufgabenstellung kann auch als Audiobotschaft abgespielt werden. Klicke auf den Record Button um eine Audiobotschaft aufzunehmen.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-audio-recorder [(audioSource)]="question.audio"></app-audio-recorder>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_FEATURE">
-    <h5>Objektposition
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Markiere das Objekt, das der Spieler in seiner Nähe finden soll. Klicke dazu auf das kleine Quadrat, umrande das Objekt dann mit mehreren Klicks und tippe auf den zuletzt gewählten Punkt, um deine Auswahl zu bestätigen. Die Markierung wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="geometry" drawTheme="searchArea" [(feature)]="question.geometry"></app-map>
+  <h5>
+    Objektposition
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Markiere das Objekt, das der Spieler in seiner Nähe finden soll. Klicke dazu auf das kleine Quadrat, umrande das Objekt dann mit mehreren Klicks und tippe auf den zuletzt gewählten Punkt, um deine Auswahl zu bestätigen. Die Markierung wird im Spiel angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map
+    featureType="geometry"
+    drawTheme="searchArea"
+    [(feature)]="question.geometry"
+  ></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_FEATURE_FREE">
-    <h5>Kartenmarkierung
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Die gewählte Kartenmarkierung wird dem Spieler bei der Aufgabenstellung angezeigt.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="geometry-free" drawTheme="searchArea" [(feature)]="question.geometry"></app-map>
+  <h5>
+    Kartenmarkierung
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Die gewählte Kartenmarkierung wird dem Spieler bei der Aufgabenstellung angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map
+    featureType="geometry-free"
+    drawTheme="searchArea"
+    [(feature)]="question.geometry"
+  ></app-map>
 </div>
 
 <div *ngIf="question.mode == taskModeEnum.NO_FEATURE">
-    <h5>Objektposition
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Markiere das Objekt, das der Spieler in seiner Umgebung finden soll. Klicke dazu auf das kleine Quadrat, umrande das Objekt dann mit mehreren Klicks und tippe auf den zuletzt gewählten Punkt, um deine Auswahl zu bestätigen.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="geometry" drawTheme="searchArea" [(feature)]="question.geometry"></app-map>
+  <h5>
+    Objektposition
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Markiere das Objekt, das der Spieler in seiner Umgebung finden soll. Klicke dazu auf das kleine Quadrat, umrande das Objekt dann mit mehreren Klicks und tippe auf den zuletzt gewählten Punkt, um deine Auswahl zu bestätigen.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map
+    featureType="geometry"
+    drawTheme="searchArea"
+    [(feature)]="question.geometry"
+  ></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_FEATURE_PHOTO">
-    <h5>Foto des zu suchenden Objekts
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Füge ein Foto vom gesuchten Objekt ein. Es wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <app-photo-upload [(photo)]="question.photo" [taskType]="taskType"></app-photo-upload>
-    <h5>Objektposition
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Markiere das gesuchte Objekt auf der Karte. Klicke dazu auf das kleine Quadrat, umrande dann das Objekt mit mehreren Klicks und tippe auf den zuletzt gewählten Punkt, um deine Auswahl zu bestätigen.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="geometry" drawTheme="searchArea" [(feature)]="question.geometry"></app-map>
+  <h5>
+    Foto des zu suchenden Objekts
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Füge ein Foto vom gesuchten Objekt ein. Es wird im Spiel angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-photo-upload
+    [(photo)]="question.photo"
+    [(video)]="question.video"
+    [taskType]="taskType"
+  ></app-photo-upload>
+  <h5>
+    Objektposition
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Markiere das gesuchte Objekt auf der Karte. Klicke dazu auf das kleine Quadrat, umrande dann das Objekt mit mehreren Klicks und tippe auf den zuletzt gewählten Punkt, um deine Auswahl zu bestätigen.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map
+    featureType="geometry"
+    drawTheme="searchArea"
+    [(feature)]="question.geometry"
+  ></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_DIRECTION">
-    <h5>Gewünschte Blickrichtung
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Markiere die Richtung, in die der Spieler blicken soll, auf der Karte. Setze dazu den roten Ring um die Position des Spielers, die er zu Aufgabenbeginn hat. Drehe die Karte nun so, dass der Pfeil in die gewünschte Richtung zeigt. Die App wird den Spieler in diese Richtung leiten, ohne die Karte anzuzeigen.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="direction" [(feature)]="question.direction"></app-map>
+  <h5>
+    Gewünschte Blickrichtung
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Markiere die Richtung, in die der Spieler blicken soll, auf der Karte. Setze dazu den roten Ring um die Position des Spielers, die er zu Aufgabenbeginn hat. Drehe die Karte nun so, dass der Pfeil in die gewünschte Richtung zeigt. Die App wird den Spieler in diese Richtung leiten, ohne die Karte anzuzeigen.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map featureType="direction" [(feature)]="question.direction"></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_DIRECTION_MARKER">
-    <h5>Richtung auf der Karte
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Markiere die Richtung, in die der Spieler blicken soll, auf der Karte. Setze dazu den roten Ring um die Position des Spielers, die er zu Aufgabenbeginn hat. Drehe die Karte nun so, dass der Pfeil in die gewünschte Richtung zeigt. Die Markierung wird im Spiel angezeigt.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="direction" [(feature)]="question.direction"></app-map>
+  <h5>
+    Richtung auf der Karte
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Markiere die Richtung, in die der Spieler blicken soll, auf der Karte. Setze dazu den roten Ring um die Position des Spielers, die er zu Aufgabenbeginn hat. Drehe die Karte nun so, dass der Pfeil in die gewünschte Richtung zeigt. Die Markierung wird im Spiel angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map featureType="direction" [(feature)]="question.direction"></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_DIRECTION_PHOTO">
-    <h5>Foto der zu suchenden Richtung
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Wähle ein Foto, das die gesuchte Blickrichtung zeigt.')">
-        </ion-icon>
-    </h5>
-    <app-photo-upload [(photo)]="question.photo" [taskType]="taskType"></app-photo-upload>
-    <h5>Richtung auf der Karte
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Markiere die Richtung, in die der Spieler blicken soll, auf der Karte. Setze dazu den roten Ring um die Position des Spielers, die er zu Aufgabenbeginn hat. Drehe die Karte nun so, dass der Pfeil in die gewünschte Richtung zeigt.')">
-        </ion-icon>
-    </h5>
-    <app-map featureType="direction" [(feature)]="question.direction"></app-map>
+  <h5>
+    Foto der zu suchenden Richtung
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Wähle ein Foto, das die gesuchte Blickrichtung zeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-photo-upload
+    [(photo)]="question.photo"
+    [(video)]="question.video"
+    [taskType]="taskType"
+  ></app-photo-upload>
+  <h5>
+    Richtung auf der Karte
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Markiere die Richtung, in die der Spieler blicken soll, auf der Karte. Setze dazu den roten Ring um die Position des Spielers, die er zu Aufgabenbeginn hat. Drehe die Karte nun so, dass der Pfeil in die gewünschte Richtung zeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-map featureType="direction" [(feature)]="question.direction"></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.PHOTO">
-    <h5>Foto zur Frage
-        <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Das gewählte Foto wird dem Spieler bei Aufgabenstellung angezeigt.')">
-        </ion-icon>
-    </h5>
-    <app-photo-upload [(photo)]="question.photo" [taskType]="taskType"></app-photo-upload>
+  <h5>
+    Foto zur Frage
+    <ion-icon
+      name="information-circle"
+      (click)="
+        showPopover(
+          $event,
+          'Das gewählte Foto wird dem Spieler bei Aufgabenstellung angezeigt.'
+        )
+      "
+    >
+    </ion-icon>
+  </h5>
+  <app-photo-upload
+    [(photo)]="question.photo"
+    [(video)]="question.video"
+    [taskType]="taskType"
+  ></app-photo-upload>
 </div>

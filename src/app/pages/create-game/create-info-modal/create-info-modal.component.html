@@ -1,16 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button color=dark (click)="dismissModal('close')">
+      <ion-button color="dark" (click)="dismissModal('close')">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title>
-      <ion-icon name="information-circle-outline" color="warning"></ion-icon> Information
+      <ion-icon name="information-circle-outline" color="warning"></ion-icon>
+      Information
     </ion-title>
 
     <ion-buttons slot="end">
-      <ion-button color=dark (click)="dismissModal(null)">
+      <ion-button color="dark" (click)="dismissModal(null)">
         <ion-icon name="save"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -18,7 +19,6 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-
   <ion-card color="warning">
     <ion-card-content>
       <ion-icon name="help-circle"></ion-icon>
@@ -29,22 +29,31 @@
   <h5>Informationstext</h5>
 
   <ion-item>
-    <ion-textarea autoGrow placeholder=" (optional)" *ngIf="task" [(ngModel)]="task.question.text"></ion-textarea>
+    <ion-textarea
+      autoGrow
+      placeholder=" (optional)"
+      *ngIf="task"
+      [(ngModel)]="task.question.text"
+    ></ion-textarea>
   </ion-item>
 
   <h5>Audiobotschaft</h5>
 
-  <app-audio-recorder [(audioSource)]="task.question.audio"></app-audio-recorder>
+  <app-audio-recorder
+    [(audioSource)]="task.question.audio"
+  ></app-audio-recorder>
 
   <h5>Fotos und Grafiken</h5>
 
-  <app-photo-upload theme="warning" [(photo)]="task.question.photo"></app-photo-upload>
+  <app-photo-upload
+    theme="warning"
+    [(photo)]="task.question.photo"
+    [(video)]="task.question.video"
+  ></app-photo-upload>
 
   <h5>Weitere Einstellungen</h5>
 
   <ion-item detail lines="none" (click)="presentMapFeaturesModal()">
-    <ion-label>
-      Kartenfeatures
-    </ion-label>
+    <ion-label> Kartenfeatures </ion-label>
   </ion-item>
 </ion-content>

@@ -320,6 +320,7 @@ ion-thumbnail {
   .photo-container {
     display: inline;
     max-height: 200px;
+    max-width: 100%;
     overflow: hidden;
     display: block;
     margin-left: auto;
@@ -334,6 +335,12 @@ ion-thumbnail {
       }
 
       border-radius: 1rem;
+      width: auto;
+    }
+
+    > video {
+      max-height: 200px;
+      height: 100%;
       width: auto;
     }
   }

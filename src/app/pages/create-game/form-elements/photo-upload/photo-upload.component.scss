@@ -1,23 +1,28 @@
 .preview {
-    position: relative;
+  position: relative;
 
-    > ion-spinner {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+  > ion-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 ion-thumbnail {
-    --size: 150px !important;
+  --size: 150px !important;
 }
 
 .photo-wrapper {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 
-    img {
-        border-radius: 1rem;
-    }
+  img {
+    border-radius: 1rem;
+  }
+}
+
+video {
+  width: auto;
+  max-height: 200px;
 }

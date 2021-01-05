@@ -13,10 +13,12 @@ import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
 })
 export class PhotoUploadComponent implements OnInit {
   @Input() photo: SafeResourceUrl = '';
+  @Input() video: SafeResourceUrl = '';
   @Input() taskType = '';
   @Input() theme = 'secondary';
 
   @Output() photoChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() videoChange: EventEmitter<any> = new EventEmitter<any>();
 
   uploading = false
   uploadingProgress = 100;
@@ -35,6 +37,12 @@ export class PhotoUploadComponent implements OnInit {
     this.photo = ''
     this.changeRef.detectChanges();
     this.photoChange.emit(this.photo)
+  }
+
+  deleteVideo() {
+    this.video = ''
+    this.changeRef.detectChanges();
+    this.videoChange.emit(this.video)
   }
 
   async capturePhoto(library: boolean = false) {
@@ -74,6 +82,31 @@ export class PhotoUploadComponent implements OnInit {
     this.photo = `${environment.apiURL}/file/image/${filename}`
     this.changeRef.detectChanges();
     this.photoChange.emit(this.photo)
+  }
+
+  async handleVideoInput(event) {
+    const videoFile: File = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append('file', videoFile);
+
+    const options = {
+      method: 'POST',
+      body: formData
+    };
+
+    const postResponse = await fetch(`${environment.apiURL}/file/upload`, options)
+
+    if (!postResponse.ok) {
+      throw Error('File upload failed')
+    }
+    this.uploading = false;
+
+    const postResponseText = await postResponse.json()
+    const filename = postResponseText.filename
+    this.video = `${environment.apiURL}/file/video/${filename}`
+    this.changeRef.detectChanges();
+    this.videoChange.emit(this.video)
   }
 
   async showPopover(ev: any, text: string) {

@@ -7,20 +7,47 @@
   <div class="photo-wrapper">
     <ion-thumbnail *ngIf="photo" class="preview">
       <ion-spinner *ngIf="uploading"></ion-spinner>
-      <img [src]="photo" [ngStyle]="{
-        filter: 'blur(' + ((100 - uploadingProgress) / 10) + 'px)'
-      }">
+      <img
+        [src]="photo"
+        [ngStyle]="{
+          filter: 'blur(' + (100 - uploadingProgress) / 10 + 'px)'
+        }"
+      />
     </ion-thumbnail>
-    <ion-button [color]="theme" size="default" (click)=capturePhoto(false)>
+    <ion-button [color]="theme" size="default" (click)="capturePhoto(false)">
       <ion-icon slot="icon-only" name="camera"></ion-icon>
     </ion-button>
-    <ion-button [color]="theme" size="default" (click)=capturePhoto(true)>
+    <ion-button [color]="theme" size="default" (click)="capturePhoto(true)">
       <ion-icon slot="icon-only" name="images"></ion-icon>
     </ion-button>
-    <ion-button *ngIf="photo" color="danger" size="default" (click)=deletePhoto()>
+
+    <ion-button [color]="theme" size="default" (click)="f.click()">
+      <ion-icon slot="icon-only" name="videocam-outline"></ion-icon>
+    </ion-button>
+    <input
+      class="ion-hide"
+      #f
+      type="file"
+      id="file-input"
+      (change)="handleVideoInput($event)"
+      accept="video/*"
+    />
+
+    <ion-button
+      *ngIf="photo"
+      color="danger"
+      size="default"
+      (click)="deletePhoto()"
+    >
       <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
     </ion-button>
   </div>
-
-
+  <div *ngIf="video">
+    <video controls>
+      <source [src]="video" />
+    </video>
+    <ion-button color="danger" size="default" (click)="deleteVideo()">
+      <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+    </ion-button>
+  </div>
 </ng-container>
