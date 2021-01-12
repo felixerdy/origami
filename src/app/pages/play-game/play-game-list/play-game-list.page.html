@@ -9,7 +9,7 @@
 
 
 <ion-content class="ion-padding">
-  <h5>Wähle ein Spiel aus der Spieleliste.</h5>
+  <h5>Wähle ein Spiel aus der Liste.</h5>
   <ion-searchbar (ionChange)="filterList($event)"></ion-searchbar>
 
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
@@ -19,7 +19,7 @@
   <ion-card *ngFor="let game of games" (click)="gameClick(game)" detail color="secondary">
     <ion-card-header>
       <ion-label>
-        <h2><span *ngIf="game.place">{{ game.place }} - </span>{{ game.name }}</h2>
+        <h2><ion-icon name="game-controller"></ion-icon><span *ngIf="game.place"><b>&nbsp;&nbsp;{{ game.place }}</b> - </span> {{ game.name }}</h2>
       </ion-label>
     </ion-card-header>
   </ion-card>

@@ -155,9 +155,6 @@
         <ion-chip color="warning" (click)="presentTaskModal('info')">
           <ion-icon name="information-circle-outline"></ion-icon>
         </ion-chip>
-        <ion-chip color="medium">
-          <ion-icon name="list"></ion-icon>
-        </ion-chip>
 
         <ng-container *ngIf="game.tasks && game.tasks.length > 1">
           <ion-chip color="dark" slot="end" *ngIf="!reorder" (click)="toggleReorder()">
