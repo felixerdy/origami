@@ -954,6 +954,8 @@ export class PlayingGamePage implements OnInit, OnDestroy {
         ' Suche im umrandeten Gebiet.';
       this.landmarkControl.setSearchArea(this.task.question.area);
     }
+
+    this.changeDetectorRef.detectChanges()
   }
 
   nextTask() {
@@ -1092,6 +1094,8 @@ export class PlayingGamePage implements OnInit, OnDestroy {
     if (this.task.category == 'info') {
       this.nextTask();
     }
+
+    this.changeDetectorRef.detectChanges()
   }
 
   userDidArrive(waypoint) {

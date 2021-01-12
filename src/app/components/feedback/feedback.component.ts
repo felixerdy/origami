@@ -1,4 +1,4 @@
-import { Map as MapboxMap } from "mapbox-gl";
+import { Map as MapboxMap } from 'mapbox-gl';
 import { OrigamiGeolocationService } from '../../services/origami-geolocation.service';
 import { Subscription } from 'rxjs';
 import { Task } from '../../models/task';
@@ -6,9 +6,9 @@ import { AnswerType, QuestionType } from '../../models/types';
 import { HelperService } from '../../services/helper.service';
 import { PlayingGamePage } from '../../pages/play-game/playing-game/playing-game.page';
 import { ToastController } from '@ionic/angular';
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import { TrackerService } from '../../services/tracker.service';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Plugins, Capacitor, GeolocationPosition } from '@capacitor/core';
 import centroid from '@turf/centroid'
 import { OrigamiOrientationService } from 'src/app/services/origami-orientation.service';
@@ -23,9 +23,9 @@ enum FeedbackType {
 }
 
 @Component({
-    selector: "app-feedback",
-    templateUrl: "./feedback.component.html",
-    styleUrls: ["./feedback.component.scss"],
+    selector: 'app-feedback',
+    templateUrl: './feedback.component.html',
+    styleUrls: ['./feedback.component.scss'],
     inputs: []
 })
 export class FeedbackComponent {
@@ -35,7 +35,7 @@ export class FeedbackComponent {
     private Math: Math = Math;
     private audioPlayer: HTMLAudioElement = new Audio();
 
-    showFeedback: boolean = false;
+    showFeedback = false;
     private feedback: any = {
         text: '',
         icon: '',
@@ -43,7 +43,7 @@ export class FeedbackComponent {
         img: '',
         hint: ''
     }
-    private feedbackRetry: boolean = false;
+    private feedbackRetry = false;
 
     private map: any;
     private geolocationService: OrigamiGeolocationService
@@ -52,14 +52,14 @@ export class FeedbackComponent {
     private trackerService: TrackerService
     private playingGamePage: PlayingGamePage
 
-    private feedbackDuration: number = 2000;
+    private feedbackDuration = 2000;
     deviceOrientationSubscription: any;
     private direction: number;
     successColor: string;
 
-    private DIRECTION_TRESHOLD: number = 22.5
+    private DIRECTION_TRESHOLD = 22.5
 
-    constructor(private orientationService: OrigamiOrientationService) { }
+    constructor(private orientationService: OrigamiOrientationService, private changeDetectorRef: ChangeDetectorRef) { }
 
     init(map: any, geolocationService: OrigamiGeolocationService, helperService: HelperService, toastController: ToastController, trackerService: TrackerService, playingGamePage: PlayingGamePage) {
         this.map = map
@@ -74,19 +74,19 @@ export class FeedbackComponent {
 
 
         this.map.loadImage(
-            "/assets/icons/position-solution.png",
+            '/assets/icons/position-solution.png',
             (error, image) => {
                 if (error) throw error;
 
-                this.map.addImage("geolocate-solution", image);
+                this.map.addImage('geolocate-solution', image);
             })
 
         this.map.loadImage(
-            "/assets/icons/directionv2-solution.png",
+            '/assets/icons/directionv2-solution.png',
             (error, image) => {
                 if (error) throw error;
 
-                this.map.addImage("direction-solution", image);
+                this.map.addImage('direction-solution', image);
             })
 
         this.audioPlayer.src = 'assets/sounds/zapsplat_multimedia_alert_musical_warm_arp_005_46194.mp3'
@@ -128,7 +128,7 @@ export class FeedbackComponent {
         numberInput,
         textInput
     }) {
-        let isCorrect: boolean = true;
+        let isCorrect = true;
         let answer: any = {}
 
         if (this.task.answer.type == AnswerType.POSITION) {
@@ -148,22 +148,22 @@ export class FeedbackComponent {
             }
         }
 
-        if (this.task.type == "theme-loc") {
+        if (this.task.type == 'theme-loc') {
             if (this.map.getSource('marker-point')) {
                 const clickPosition = this.map.getSource('marker-point')._data.geometry.coordinates;
                 const distance = this.helperService.getDistanceFromLatLonInM(clickPosition[1], clickPosition[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude)
                 isCorrect = distance < PlayingGamePage.triggerTreshold;
                 answer = {
-                    clickPosition: clickPosition,
-                    distance: distance,
+                    clickPosition,
+                    distance,
                     correct: isCorrect
                 }
 
-                this.initFeedback(distance < PlayingGamePage.triggerTreshold, { distance: distance, clickPosition: clickPosition })
+                this.initFeedback(distance < PlayingGamePage.triggerTreshold, { distance, clickPosition })
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte setze zuerst deine Position",
-                    color: "dark",
+                    message: 'Bitte setze zuerst deine Position',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -183,7 +183,7 @@ export class FeedbackComponent {
                 this.initFeedback(isCorrectPhotoSelected);
                 isCorrect = isCorrectPhotoSelected
                 answer = {
-                    selectedPhoto: selectedPhoto,
+                    selectedPhoto,
                     correct: isCorrect
                 }
                 if (isCorrectPhotoSelected) {
@@ -192,8 +192,8 @@ export class FeedbackComponent {
                 }
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte wähle zuerst ein Foto",
-                    color: "dark",
+                    message: 'Bitte wähle zuerst ein Foto',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -211,7 +211,7 @@ export class FeedbackComponent {
                 this.initFeedback(isCorrectChoiceSelected);
                 isCorrect = isCorrectChoiceSelected
                 answer = {
-                    selectedChoice: selectedChoice,
+                    selectedChoice,
                     correct: isCorrect
                 }
                 if (isCorrectChoiceSelected) {
@@ -220,8 +220,8 @@ export class FeedbackComponent {
                 }
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte wähle zuerst eine Antwort",
-                    color: "dark",
+                    message: 'Bitte wähle zuerst eine Antwort',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -235,10 +235,10 @@ export class FeedbackComponent {
         }
 
         if (this.task.answer.type == AnswerType.PHOTO) {
-            if (photo == "") {
+            if (photo == '') {
                 const toast = await this.toastController.create({
-                    message: "Bitte mache ein Foto",
-                    color: "dark",
+                    message: 'Bitte mache ein Foto',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -253,28 +253,28 @@ export class FeedbackComponent {
                 this.initFeedback(true);
                 isCorrect = true;
                 answer = {
-                    photo: photo,
+                    photo,
                     correct: isCorrect
                 }
-                photo = "";
-                photoURL = "";
+                photo = '';
+                photoURL = '';
             }
         }
 
-        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != "theme-loc") {
+        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != 'theme-loc') {
             if (this.map.getSource('marker-point')) {
                 const clickPosition = this.map.getSource('marker-point')._data.geometry.coordinates;
                 const isInPolygon = booleanPointInPolygon(clickPosition, this.task.question.geometry.features[0])
-                this.initFeedback(isInPolygon, { clickPosition: clickPosition });
+                this.initFeedback(isInPolygon, { clickPosition });
                 isCorrect = isInPolygon;
                 answer = {
-                    clickPosition: clickPosition,
+                    clickPosition,
                     correct: isCorrect
                 }
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte setze zuerst einen Punkt auf der Karte",
-                    color: "dark",
+                    message: 'Bitte setze zuerst einen Punkt auf der Karte',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -291,7 +291,7 @@ export class FeedbackComponent {
             this.initFeedback(this.Math.abs(directionBearing - compassHeading) <= this.DIRECTION_TRESHOLD);
             isCorrect = this.Math.abs(directionBearing - compassHeading) <= this.DIRECTION_TRESHOLD;
             answer = {
-                compassHeading: compassHeading,
+                compassHeading,
                 correct: isCorrect
             }
         }
@@ -299,20 +299,20 @@ export class FeedbackComponent {
         if (this.task.answer.type == AnswerType.MAP_DIRECTION) {
             if (clickDirection != 0) {
                 if (this.task.question.type == QuestionType.MAP_DIRECTION_PHOTO) {
-                    this.initFeedback(this.Math.abs(clickDirection - this.task.question.direction.bearing) <= this.DIRECTION_TRESHOLD, { clickDirection: clickDirection });
+                    this.initFeedback(this.Math.abs(clickDirection - this.task.question.direction.bearing) <= this.DIRECTION_TRESHOLD, { clickDirection });
                     isCorrect = this.Math.abs(clickDirection - this.task.question.direction.bearing) <= this.DIRECTION_TRESHOLD;
                 } else {
-                    this.initFeedback(this.Math.abs(clickDirection - compassHeading) <= this.DIRECTION_TRESHOLD, { clickDirection: clickDirection });
+                    this.initFeedback(this.Math.abs(clickDirection - compassHeading) <= this.DIRECTION_TRESHOLD, { clickDirection });
                     isCorrect = this.Math.abs(clickDirection - compassHeading) <= this.DIRECTION_TRESHOLD;
                 }
                 answer = {
-                    clickDirection: clickDirection,
+                    clickDirection,
                     correct: isCorrect
                 }
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte setze zuerst deine Blickrichtung",
-                    color: "dark",
+                    message: 'Bitte setze zuerst deine Blickrichtung',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -330,13 +330,13 @@ export class FeedbackComponent {
                 isCorrect = numberInput == this.task.answer.number
                 this.initFeedback(isCorrect);
                 answer = {
-                    numberInput: numberInput,
+                    numberInput,
                     correct: isCorrect
                 }
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte gib zuerst eine Zahl ein",
-                    color: "dark",
+                    message: 'Bitte gib zuerst eine Zahl ein',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -359,8 +359,8 @@ export class FeedbackComponent {
                 }
             } else {
                 const toast = await this.toastController.create({
-                    message: "Bitte gib zuerst eine Antwort ein",
-                    color: "dark",
+                    message: 'Bitte gib zuerst eine Antwort ein',
+                    color: 'dark',
                     // showCloseButton: true,
                     duration: 2000
                 });
@@ -374,14 +374,14 @@ export class FeedbackComponent {
         }
 
         this.trackerService.addEvent({
-            type: "ON_OK_CLICKED",
+            type: 'ON_OK_CLICKED',
             correct: isCorrect,
-            answer: answer
+            answer
         });
     }
 
     public initFeedback(correct: boolean, options: any = undefined) {
-        // feedback is already showing. 
+        // feedback is already showing.
         if (this.showFeedback) {
             return;
         }
@@ -406,30 +406,30 @@ export class FeedbackComponent {
 
         switch (type) {
             case FeedbackType.Correct:
-                this.feedback.icon = "😊"
-                this.feedback.text = "Du hast die Aufgabe richtig gelöst!"
+                this.feedback.icon = '😊'
+                this.feedback.text = 'Du hast die Aufgabe richtig gelöst!'
                 break;
             case FeedbackType.Wrong:
-                this.feedback.icon = "😕"
-                this.feedback.text = "Das stimmt leider nicht. Die richtige Lösung wird in Grün angezeigt."
+                this.feedback.icon = '😕'
+                this.feedback.text = 'Das stimmt leider nicht. Die richtige Lösung wird in Grün angezeigt.'
                 break;
             case FeedbackType.TryAgain:
-                this.feedback.icon = "😕"
-                this.feedback.text = "Probiere es noch einmal!"
+                this.feedback.icon = '😕'
+                this.feedback.text = 'Probiere es noch einmal!'
                 this.feedbackRetry = true;
                 break;
             case FeedbackType.Saved:
-                this.feedback.icon = ""
-                this.feedback.text = "Deine Antwort wurde gespeichert!"
+                this.feedback.icon = ''
+                this.feedback.text = 'Deine Antwort wurde gespeichert!'
                 break;
             case FeedbackType.Success:
-                this.feedback.icon = ""
-                this.feedback.text = "Ziel erreicht!"
+                this.feedback.icon = ''
+                this.feedback.text = 'Ziel erreicht!'
                 break;
         }
 
-        this.feedback.hint = ""
-        this.feedback.solution = ""
+        this.feedback.hint = ''
+        this.feedback.solution = ''
 
         if (this.task.settings.feedback && !this.task.settings.multipleTries && !correct) {
             this.showSolution()
@@ -485,7 +485,7 @@ export class FeedbackComponent {
             }
         }
 
-        if (this.task.type == "theme-loc") {
+        if (this.task.type == 'theme-loc') {
             const evalDistance = options.distance - (PlayingGamePage.triggerTreshold as number)
             if (evalDistance > 10) {
                 this.feedback.hint = `Du liegst ${options.distance.toFixed(1)} m daneben.`
@@ -502,7 +502,7 @@ export class FeedbackComponent {
 
         }
 
-        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != "theme-loc") {
+        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != 'theme-loc') {
             const center = centroid(this.task.question.geometry.features[0]);
             console.log(center)
             const waypoint = options.clickPosition;
@@ -539,46 +539,46 @@ export class FeedbackComponent {
     }
 
     public showSolution() {
-        this.feedback.solution = ""
+        this.feedback.solution = ''
 
         if (this.task.answer.type == AnswerType.POSITION) {
-            this.map.addSource("geolocate-solution", {
-                type: "geojson",
+            this.map.addSource('geolocate-solution', {
+                type: 'geojson',
                 data: {
-                    type: "Point",
+                    type: 'Point',
                     coordinates: [this.lastKnownPosition.coords.longitude, this.lastKnownPosition.coords.latitude]
                 }
             });
             this.map.addLayer({
-                id: "geolocate-solution",
-                source: "geolocate-solution",
-                type: "symbol",
+                id: 'geolocate-solution',
+                source: 'geolocate-solution',
+                type: 'symbol',
                 layout: {
-                    "icon-image": "geolocate-solution",
-                    "icon-size": 0.4,
-                    "icon-offset": [0, 0],
-                    "icon-allow-overlap": true
+                    'icon-image': 'geolocate-solution',
+                    'icon-size': 0.4,
+                    'icon-offset': [0, 0],
+                    'icon-allow-overlap': true
                 }
             });
         }
 
-        if (this.task.type == "theme-loc") {
-            this.map.addSource("geolocate-solution", {
-                type: "geojson",
+        if (this.task.type == 'theme-loc') {
+            this.map.addSource('geolocate-solution', {
+                type: 'geojson',
                 data: {
-                    type: "Point",
+                    type: 'Point',
                     coordinates: [this.lastKnownPosition.coords.longitude, this.lastKnownPosition.coords.latitude]
                 }
             });
             this.map.addLayer({
-                id: "geolocate-solution",
-                source: "geolocate-solution",
-                type: "symbol",
+                id: 'geolocate-solution',
+                source: 'geolocate-solution',
+                type: 'symbol',
                 layout: {
-                    "icon-image": "geolocate-solution",
-                    "icon-size": 0.4,
-                    "icon-offset": [0, 0],
-                    "icon-allow-overlap": true
+                    'icon-image': 'geolocate-solution',
+                    'icon-size': 0.4,
+                    'icon-offset': [0, 0],
+                    'icon-allow-overlap': true
                 }
             });
         }
@@ -592,7 +592,7 @@ export class FeedbackComponent {
             this.feedback.solution = `Die korrekte Lösung ist ${this.task.answer.choices[0]}`
         }
 
-        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != "theme-loc") {
+        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != 'theme-loc') {
             this.showSolutionLandmark(this.task.question.geometry)
         }
 
@@ -612,22 +612,22 @@ export class FeedbackComponent {
                 direction = this.direction || 0
             }
 
-            this.map.addSource("direction-solution", {
-                type: "geojson",
+            this.map.addSource('direction-solution', {
+                type: 'geojson',
                 data: {
-                    type: "Point",
+                    type: 'Point',
                     coordinates: position
                 }
             });
             this.map.addLayer({
-                id: "direction-solution",
-                source: "direction-solution",
-                type: "symbol",
+                id: 'direction-solution',
+                source: 'direction-solution',
+                type: 'symbol',
                 layout: {
-                    "icon-image": "direction-solution",
-                    "icon-size": 0.65,
-                    "icon-offset": [0, -8],
-                    "icon-rotate": direction
+                    'icon-image': 'direction-solution',
+                    'icon-size': 0.65,
+                    'icon-offset': [0, -8],
+                    'icon-rotate': direction
                 }
             });
         }
@@ -660,18 +660,18 @@ export class FeedbackComponent {
         this.removeSolution();
 
         this.map.addSource('solution-source', {
-            type: "geojson",
+            type: 'geojson',
             data: landmark
         })
         this.map.addLayer({
-            id: "solution-polygon",
-            type: "fill-extrusion",
+            id: 'solution-polygon',
+            type: 'fill-extrusion',
             source: 'solution-source',
-            filter: ['all', ["==", ["geometry-type"], "Polygon"]],
+            filter: ['all', ['==', ['geometry-type'], 'Polygon']],
             paint: {
-                "fill-extrusion-color": this.successColor,
-                "fill-extrusion-opacity": 0.5,
-                "fill-extrusion-height": 20,
+                'fill-extrusion-color': this.successColor,
+                'fill-extrusion-opacity': 0.5,
+                'fill-extrusion-height': 20,
             }
         });
     }
@@ -680,6 +680,8 @@ export class FeedbackComponent {
         this.showFeedback = false;
         this.feedbackRetry = false;
         this.removeSolution();
+
+        this.changeDetectorRef.detectChanges()
     }
 
     public remove(): void {
@@ -689,7 +691,7 @@ export class FeedbackComponent {
 
     public onWaypointReached() {
         this.trackerService.addEvent({
-            type: "WAYPOINT_REACHED"
+            type: 'WAYPOINT_REACHED'
         });
         this.initFeedback(true);
     }
@@ -725,7 +727,7 @@ export class FeedbackComponent {
         // -------
         // Feedback in Map Click (needs to be in seperate function later on)
         // -------
-        let answer = undefined;
+        let answer;
 
         if (this.task.answer.type == AnswerType.POSITION) {
             const waypoint = this.task.answer.position.geometry.coordinates;
@@ -738,12 +740,12 @@ export class FeedbackComponent {
             }
         }
 
-        if (this.task.type == "theme-loc") {
+        if (this.task.type == 'theme-loc') {
             if (this.map.getSource('marker-point')) {
                 const distance = this.helperService.getDistanceFromLatLonInM(clickPosition[1], clickPosition[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude)
                 answer = {
-                    clickPosition: clickPosition,
-                    distance: distance,
+                    clickPosition,
+                    distance,
                     correct: distance < PlayingGamePage.triggerTreshold
                 }
             } else {
@@ -758,7 +760,7 @@ export class FeedbackComponent {
         if (this.task.answer.type == AnswerType.MULTIPLE_CHOICE) {
             if (selectedPhoto != null) {
                 answer = {
-                    selectedPhoto: selectedPhoto,
+                    selectedPhoto,
                     correct: isCorrectPhotoSelected
                 }
             } else {
@@ -772,7 +774,7 @@ export class FeedbackComponent {
         if (this.task.answer.type == AnswerType.MULTIPLE_CHOICE_TEXT) {
             if (selectedChoice != null) {
                 answer = {
-                    selectedChoice: selectedChoice,
+                    selectedChoice,
                     correct: isCorrectChoiceSelected
                 }
             } else {
@@ -784,24 +786,24 @@ export class FeedbackComponent {
         }
 
         if (this.task.answer.type == AnswerType.PHOTO) {
-            if (photo == "") {
+            if (photo == '') {
                 answer = {
                     photo: null,
                     correct: false
                 }
             } else {
                 answer = {
-                    photo: photo,
+                    photo,
                     correct: true
                 }
             }
         }
 
-        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != "theme-loc") {
+        if (this.task.answer.type == AnswerType.MAP_POINT && this.task.type != 'theme-loc') {
             if (this.map.getSource('marker-point')) {
                 const isInPolygon = booleanPointInPolygon(clickPosition, this.task.question.geometry.features[0])
                 answer = {
-                    clickPosition: clickPosition,
+                    clickPosition,
                     correct: isInPolygon
                 }
             } else {
@@ -814,7 +816,7 @@ export class FeedbackComponent {
 
         if (this.task.answer.type == AnswerType.DIRECTION) {
             answer = {
-                compassHeading: compassHeading,
+                compassHeading,
                 correct: this.Math.abs(directionBearing - compassHeading) <= 22.5
             }
         }
@@ -828,7 +830,7 @@ export class FeedbackComponent {
                     isCorrect = this.Math.abs(clickDirection - compassHeading) <= this.DIRECTION_TRESHOLD;
                 }
                 answer = {
-                    clickDirection: clickDirection,
+                    clickDirection,
                     correct: isCorrect
                 }
             } else {
@@ -841,7 +843,7 @@ export class FeedbackComponent {
 
         if (this.task.answer.type == AnswerType.NUMBER) {
             answer = {
-                numberInput: numberInput,
+                numberInput,
                 correct: numberInput == this.task.answer.number
             }
         }
