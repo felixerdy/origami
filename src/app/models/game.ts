@@ -8,6 +8,7 @@ export class Game {
     public tracking: boolean,
     public tasks: Task[],
     public bbox: any,
-    public mapSectionVisible: boolean
-  ) {}
+    public mapSectionVisible: boolean,
+    public geofence: boolean
+  ) { }
 }

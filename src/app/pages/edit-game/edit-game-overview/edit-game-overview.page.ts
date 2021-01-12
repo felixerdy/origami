@@ -47,6 +47,9 @@ export class EditGameOverviewPage implements AfterViewInit {
   mapSectionVisible = true;
   landmarkControl: LandmarkControl;
 
+  geofence = false;
+
+
 
   constructor(
     public popoverController: PopoverController,
@@ -73,14 +76,14 @@ export class EditGameOverviewPage implements AfterViewInit {
       styles: [// ACTIVE (being drawn)
         // line stroke
         {
-          'id': 'gl-draw-line',
-          'type': 'line',
-          'filter': ['all', ['==', '$type', 'LineString'], ['!=', 'mode', 'static']],
-          'layout': {
+          id: 'gl-draw-line',
+          type: 'line',
+          filter: ['all', ['==', '$type', 'LineString'], ['!=', 'mode', 'static']],
+          layout: {
             'line-cap': 'round',
             'line-join': 'round'
           },
-          'paint': {
+          paint: {
             'line-color': getComputedStyle(document.documentElement).getPropertyValue('--ion-color-warning'),
             'line-dasharray': [3, 2],
             'line-width': 5
@@ -88,10 +91,10 @@ export class EditGameOverviewPage implements AfterViewInit {
         },
         // polygon fill
         {
-          'id': 'gl-draw-polygon-fill',
-          'type': 'fill',
-          'filter': ['all', ['==', '$type', 'Polygon'], ['!=', 'mode', 'static']],
-          'paint': {
+          id: 'gl-draw-polygon-fill',
+          type: 'fill',
+          filter: ['all', ['==', '$type', 'Polygon'], ['!=', 'mode', 'static']],
+          paint: {
             'fill-color': getComputedStyle(document.documentElement).getPropertyValue('--ion-color-warning'),
             'fill-outline-color': getComputedStyle(document.documentElement).getPropertyValue('--ion-color-warning'),
             'fill-opacity': 0.5
@@ -100,14 +103,14 @@ export class EditGameOverviewPage implements AfterViewInit {
         // polygon outline stroke
         // This doesn't style the first edge of the polygon, which uses the line stroke styling instead
         {
-          'id': 'gl-draw-polygon-stroke-active',
-          'type': 'line',
-          'filter': ['all', ['==', '$type', 'Polygon'], ['!=', 'mode', 'static']],
-          'layout': {
+          id: 'gl-draw-polygon-stroke-active',
+          type: 'line',
+          filter: ['all', ['==', '$type', 'Polygon'], ['!=', 'mode', 'static']],
+          layout: {
             'line-cap': 'round',
             'line-join': 'round'
           },
-          'paint': {
+          paint: {
             'line-color': getComputedStyle(document.documentElement).getPropertyValue('--ion-color-warning'),
             'line-dasharray': [3, 2],
             'line-width': 5
@@ -115,20 +118,20 @@ export class EditGameOverviewPage implements AfterViewInit {
         },
         // vertex point halos
         {
-          'id': 'gl-draw-polygon-and-line-vertex-halo-active',
-          'type': 'circle',
-          'filter': ['all', ['==', 'meta', 'vertex'], ['==', '$type', 'Point'], ['!=', 'mode', 'static']],
-          'paint': {
+          id: 'gl-draw-polygon-and-line-vertex-halo-active',
+          type: 'circle',
+          filter: ['all', ['==', 'meta', 'vertex'], ['==', '$type', 'Point'], ['!=', 'mode', 'static']],
+          paint: {
             'circle-radius': 5,
             'circle-color': '#FFF'
           }
         },
         // vertex points
         {
-          'id': 'gl-draw-polygon-and-line-vertex-active',
-          'type': 'circle',
-          'filter': ['all', ['==', 'meta', 'vertex'], ['==', '$type', 'Point'], ['!=', 'mode', 'static']],
-          'paint': {
+          id: 'gl-draw-polygon-and-line-vertex-active',
+          type: 'circle',
+          filter: ['all', ['==', 'meta', 'vertex'], ['==', '$type', 'Point'], ['!=', 'mode', 'static']],
+          paint: {
             'circle-radius': 3,
             'circle-color': getComputedStyle(document.documentElement).getPropertyValue('--ion-color-warning'),
           }
@@ -137,24 +140,24 @@ export class EditGameOverviewPage implements AfterViewInit {
         // INACTIVE (static, already drawn)
         // line stroke
         {
-          'id': 'gl-draw-line-static',
-          'type': 'line',
-          'filter': ['all', ['==', '$type', 'LineString'], ['==', 'mode', 'static']],
-          'layout': {
+          id: 'gl-draw-line-static',
+          type: 'line',
+          filter: ['all', ['==', '$type', 'LineString'], ['==', 'mode', 'static']],
+          layout: {
             'line-cap': 'round',
             'line-join': 'round'
           },
-          'paint': {
+          paint: {
             'line-color': '#000',
             'line-width': 3
           }
         },
         // polygon fill
         {
-          'id': 'gl-draw-polygon-fill-static',
-          'type': 'fill',
-          'filter': ['all', ['==', '$type', 'Polygon'], ['==', 'mode', 'static']],
-          'paint': {
+          id: 'gl-draw-polygon-fill-static',
+          type: 'fill',
+          filter: ['all', ['==', '$type', 'Polygon'], ['==', 'mode', 'static']],
+          paint: {
             'fill-color': '#000',
             'fill-outline-color': '#000',
             'fill-opacity': 0.5
@@ -162,14 +165,14 @@ export class EditGameOverviewPage implements AfterViewInit {
         },
         // polygon outline
         {
-          'id': 'gl-draw-polygon-stroke-static',
-          'type': 'line',
-          'filter': ['all', ['==', '$type', 'Polygon'], ['==', 'mode', 'static']],
-          'layout': {
+          id: 'gl-draw-polygon-stroke-static',
+          type: 'line',
+          filter: ['all', ['==', '$type', 'Polygon'], ['==', 'mode', 'static']],
+          layout: {
             'line-cap': 'round',
             'line-join': 'round'
           },
-          'paint': {
+          paint: {
             'line-color': '#000',
             'line-width': 3
           }
@@ -193,6 +196,7 @@ export class EditGameOverviewPage implements AfterViewInit {
           }
 
           this.mapSectionVisible = this.game.mapSectionVisible
+          this.geofence = this.game.geofence
 
           if (this.mapSection) {
             this.changeDetectorRef.detectChanges();
@@ -213,7 +217,7 @@ export class EditGameOverviewPage implements AfterViewInit {
       container: this.mapContainer.nativeElement,
       style: {
         version: 8,
-        'metadata': {
+        metadata: {
           'mapbox:autocomposite': true,
           'mapbox:type': 'template'
         },
@@ -225,9 +229,9 @@ export class EditGameOverviewPage implements AfterViewInit {
             ],
             tileSize: 256,
           },
-          'mapbox': {
-            'url': 'mapbox://mapbox.mapbox-streets-v7',
-            'type': 'vector'
+          mapbox: {
+            url: 'mapbox://mapbox.mapbox-streets-v7',
+            type: 'vector'
           }
         },
         layers: [
@@ -239,15 +243,15 @@ export class EditGameOverviewPage implements AfterViewInit {
             maxzoom: 22
           },
           {
-            'id': 'building',
-            'type': 'fill',
-            'source': 'mapbox',
+            id: 'building',
+            type: 'fill',
+            source: 'mapbox',
             'source-layer': 'building',
-            'paint': {
+            paint: {
               'fill-color': '#d6d6d6',
               'fill-opacity': 0,
             },
-            'interactive': true
+            interactive: true
           },
         ]
       },
@@ -361,6 +365,8 @@ export class EditGameOverviewPage implements AfterViewInit {
       this.changeDetectorRef.detectChanges();
 
       this.initMap();
+    } else {
+      this.geofence = false;
     }
   }
 
@@ -386,6 +392,7 @@ export class EditGameOverviewPage implements AfterViewInit {
     this.gameFactory.addGameInformation({
       bbox: this.mapSection ? this.draw.getAll() : null,
       mapSectionVisible: this.mapSectionVisible,
+      geofence: this.geofence,
       name: this.game.name,
       place: this.game.place
     });

@@ -331,6 +331,14 @@
     >
   </ion-card>
 
+  <ion-card class="overlay success" *ngIf="geofenceAlert">
+    <h3>
+      Du hast das
+      <ion-text color="warning">markierte Gebiet</ion-text> verlassen. Kehre
+      zurück!
+    </h3>
+  </ion-card>
+
   <ion-card class="overlay correct-position" *ngIf="showCorrectPositionModal">
     <h4>Stehst du genau richtig? Dann drücke OK!</h4>
   </ion-card>

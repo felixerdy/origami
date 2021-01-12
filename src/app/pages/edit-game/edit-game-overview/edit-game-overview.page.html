@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button color=dark defaultHref="edit-game"></ion-back-button>
+      <ion-back-button color="dark" defaultHref="edit-game"></ion-back-button>
     </ion-buttons>
     <ion-title>Speichere dein OriGami</ion-title>
   </ion-toolbar>
@@ -9,7 +9,6 @@
 
 <ion-content>
   <div [className]="showUpload ? 'blur' : ''">
-
     <ion-card color="danger" *ngIf="showNameError">
       <ion-card-content>
         Ein Spiel mit diesem Namen existiert bereits
@@ -20,34 +19,73 @@
       <ion-card-content>
         <ion-item color="light">
           <ion-label position="stacked">Spielname</ion-label>
-          <ion-input type="text" [(ngModel)]="game.name" name="name"></ion-input>
+          <ion-input
+            type="text"
+            [(ngModel)]="game.name"
+            name="name"
+          ></ion-input>
         </ion-item>
         <ion-item color="light">
           <ion-label position="stacked">Spielort</ion-label>
-          <ion-input type="text" [(ngModel)]="game.place" name="name"></ion-input>
+          <ion-input
+            type="text"
+            [(ngModel)]="game.place"
+            name="name"
+          ></ion-input>
         </ion-item>
       </ion-card-content>
     </ion-card>
 
     <div class="map-section-container">
       <ion-item lines="none" color="light">
-        <ion-label>Kartenausschnitt <ion-icon name="information-circle"
-            (click)="showPopover($event, 'Soll das Spiel auf einen Kartenausschnitt begrenzt werden?')">
+        <ion-label
+          >Kartenausschnitt
+          <ion-icon
+            name="information-circle"
+            (click)="showPopover($event, 'Soll das Spiel auf einen Kartenausschnitt begrenzt werden?')"
+          >
           </ion-icon>
         </ion-label>
-        <ion-toggle [(ngModel)]="mapSection" (ngModelChange)="mapSectionToggleChange($event)"></ion-toggle>
+        <ion-toggle
+          [(ngModel)]="mapSection"
+          (ngModelChange)="mapSectionToggleChange($event)"
+        ></ion-toggle>
+      </ion-item>
+
+      <ion-item lines="none" color="light" *ngIf="mapSection">
+        <ion-label
+          >Warnung bei Verlassen der markierten Region
+          <ion-icon
+            name="information-circle"
+            (click)="showPopover($event, 'Dem Spieler wird beim Verlassen der markierten Region eine Warnung angezeigt')"
+          >
+          </ion-icon>
+        </ion-label>
+        <ion-toggle [(ngModel)]="geofence"></ion-toggle>
       </ion-item>
 
       <div class="flex-radio-group" *ngIf="mapSection">
         <div>
-          <input id="rd-visible" name="map-section" type="radio" value="visible" [checked]="mapSectionVisible"
-            (click)="mapSectionVisibleChange(true)">
+          <input
+            id="rd-visible"
+            name="map-section"
+            type="radio"
+            value="visible"
+            [checked]="mapSectionVisible"
+            (click)="mapSectionVisibleChange(true)"
+          />
           <label for="rd-visible"> Umrandet</label>
         </div>
 
         <div>
-          <input id="rd-invisible" name="map-section" type="radio" value="invisible" [checked]="!mapSectionVisible"
-            (click)="mapSectionVisibleChange(false)">
+          <input
+            id="rd-invisible"
+            name="map-section"
+            type="radio"
+            value="invisible"
+            [checked]="!mapSectionVisible"
+            (click)="mapSectionVisibleChange(false)"
+          />
           <label for="rd-invisible"> Unsichtbar</label>
         </div>
       </div>
@@ -55,23 +93,27 @@
       <div #boundingMap class="map" *ngIf="mapSection"></div>
     </div>
 
-
     <ion-card color="light">
       <ion-card-content>
         <div class="ion-padding">
-          <ion-button expand="block" type="submit" class="ion-no-margin" (click)="uploadGame()">Spiel speichern
+          <ion-button
+            expand="block"
+            type="submit"
+            class="ion-no-margin"
+            (click)="uploadGame()"
+            >Spiel speichern
           </ion-button>
         </div>
       </ion-card-content>
     </ion-card>
-
   </div>
-
 
   <div class="overlay success" *ngIf="showUpload">
     <h3 *ngIf="!showSuccess">Übertrage Daten...</h3>
     <h3 *ngIf="showSuccess">Dein Spiel wurde gespeichert</h3>
     <div lottie [options]="lottieConfig"></div>
-    <ion-button (click)="navigateHome()" [disabled]="!showSuccess">Fertig</ion-button>
+    <ion-button (click)="navigateHome()" [disabled]="!showSuccess"
+      >Fertig</ion-button
+    >
   </div>
 </ion-content>
