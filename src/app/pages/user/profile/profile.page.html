@@ -9,9 +9,39 @@
 
 <ion-content class="ion-padding">
   <div>
-    <h1>Profil bearbeiten</h1>
-    <form (ngSubmit)="updateUser()" [formGroup]="loginForm">
-      <!-- <ion-input
+    <h1>Profil</h1>
+
+    <p><b>Name: </b>{{user.username}}</p>
+    <p><b>E-Mail: </b>{{user.email}}</p>
+    <div>
+      <b>E-Mail bestätigt: </b>
+      <ion-chip *ngIf="user.emailIsConfirmed" color="success">
+        <ion-label>Ja</ion-label>
+      </ion-chip>
+      <ion-chip *ngIf="!user.emailIsConfirmed" color="danger">
+        <ion-label>Nein</ion-label>
+      </ion-chip>
+    </div>
+    <p><b>Registriert am: </b>{{user.createdAt | date:'d.MM.y'}}</p>
+    <div>
+      <b>Rollen: </b>
+      <div style="display: inline" *ngFor="let role of user.roles">
+        <ion-chip *ngIf="role == 'user'" color="primary">
+          <ion-label>User</ion-label>
+        </ion-chip>
+        <ion-chip *ngIf="role == 'contentAdmin'" color="tertiary">
+          <ion-label>Content Admin</ion-label>
+        </ion-chip>
+        <ion-chip *ngIf="role == 'trackAccess'" color="success">
+          <ion-label>Track Access</ion-label>
+        </ion-chip>
+        <ion-chip *ngIf="role == 'admin'" color="dark">
+          <ion-label>Admin</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+    <!-- <form (ngSubmit)="updateUser()" [formGroup]="loginForm"> -->
+    <!-- <ion-input
         placeholder="E-Mail"
         [id]="'email'"
         formControlName="email"
@@ -27,9 +57,10 @@
         >Speichern</ion-button
       >
       <br /> -->
-      <ion-button expand="block" fill="outline" (click)="logout()"
-        >Logout</ion-button
-      >
-    </form>
+    <br />
+    <ion-button expand="block" fill="outline" (click)="logout()"
+      >Logout</ion-button
+    >
+    <!-- </form> -->
   </div>
 </ion-content>
