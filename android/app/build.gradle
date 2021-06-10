@@ -6,8 +6,8 @@ android {
         applicationId "de.reedu.origaminext"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "0.22"
+        versionCode 1
+        versionName "0.25"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

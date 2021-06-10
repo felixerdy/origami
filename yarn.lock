@@ -2904,6 +2904,12 @@ canonical-path@1.0.0:
   resolved "https://registry.yarnpkg.com/canonical-path/-/canonical-path-1.0.0.tgz#fcb470c23958def85081856be7a86e904f180d1d"
   integrity sha512-feylzsbDxi1gPZ1IjystzIQZagYYLvfKrSuygUCgf7z6x790VEzze5QEkdSV1U58RA7Hi0+v6fv4K54atOzATg==
 
+"capacitor-idfa-ios-app-tracking@https://github.com/Mindcurv/capacitor-idfa-ios-app-tracking":
+  version "1.0.2"
+  resolved "https://github.com/Mindcurv/capacitor-idfa-ios-app-tracking#18686a53cc62157ade178bd4cef50ed31129f1fe"
+  dependencies:
+    "@capacitor/core" latest
+
 capacitor-keep-screen-on@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/capacitor-keep-screen-on/-/capacitor-keep-screen-on-0.0.4.tgz#42811e70e407fd5a3cc84e8dbe16b9357c18d2b8"

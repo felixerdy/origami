@@ -50,6 +50,8 @@
 	<string>OriGami benötigt Zugriff auf deine Fotos um Aufgaben mit Bildern zu versehen.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>OriGami benötigt Zugriff auf deine Fotos um Aufgaben mit Bildern zu versehen.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>OriGami trackt deine Positionen und Sensoren ausschließlich für das Spiel und nicht für personalisierte Werbung</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
