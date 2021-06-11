@@ -1,12 +1,32 @@
 <div class="audio-recorder">
-    <div>
-        <ion-button color="light" (click)="startStopRec()">
-            <ion-icon *ngIf="!recording" name="radio-button-on-outline" color="danger"></ion-icon>
-            <ion-icon *ngIf="recording" name="stop-circle-outline"></ion-icon>
-        </ion-button>
-        <app-audio-player [audioSource]="audioSource"></app-audio-player>
-    </div>
-    <ion-button class="trash" color="light" (click)="deleteAudio()" *ngIf="audioSource">
-        <ion-icon name="trash-outline" color="danger"></ion-icon>
+  <div>
+    <ion-button color="light" (click)="startStopRec()">
+      <ion-icon
+        *ngIf="!recording"
+        name="radio-button-on-outline"
+        color="danger"
+      ></ion-icon>
+      <ion-icon *ngIf="recording" name="stop-circle-outline"></ion-icon>
     </ion-button>
+    <ion-button color="light" (click)="f.click()">
+      <ion-icon name="document-outline"></ion-icon>
+    </ion-button>
+    <input
+      class="ion-hide"
+      #f
+      type="file"
+      (change)="audioFromFile($event)"
+      id="file-input"
+      accept="audio/mpeg"
+    />
+    <app-audio-player [audioSource]="audioSource"></app-audio-player>
+  </div>
+  <ion-button
+    class="trash"
+    color="light"
+    (click)="deleteAudio()"
+    *ngIf="audioSource"
+  >
+    <ion-icon name="trash-outline" color="danger"></ion-icon>
+  </ion-button>
 </div>

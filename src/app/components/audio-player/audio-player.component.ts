@@ -1,48 +1,51 @@
 import {
-    Component, Input, ViewChild, AfterViewInit, OnChanges, SimpleChanges
-} from '@angular/core';
+  Component,
+  Input,
+  ViewChild,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 
 @Component({
-    selector: 'app-audio-player',
-    templateUrl: './audio-player.component.html',
-
+  selector: "app-audio-player",
+  templateUrl: "./audio-player.component.html",
 })
 export class AudioPlayerComponent implements AfterViewInit, OnChanges {
+  @Input("audioSource") audioSource: string;
 
-    @Input('audioSource') audioSource: string;
+  @ViewChild("audio") audio;
 
-    @ViewChild('audio') audio;
+  public playing = false;
 
-    public playing = false;
+  constructor() {}
 
-    constructor() { }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (this.audio != undefined) {
-            this.loadAudio();
-        }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.audio != undefined) {
+      this.loadAudio();
     }
+  }
 
-    ngAfterViewInit(): void {
-        this.loadAudio();
+  ngAfterViewInit(): void {
+    this.loadAudio();
 
-        this.audio.nativeElement.addEventListener('ended', () => {
-            this.loadAudio();
-            this.playing = false;
-        });
+    this.audio.nativeElement.addEventListener("ended", () => {
+      this.loadAudio();
+      this.playing = false;
+    });
+  }
+
+  loadAudio() {
+    (this.audio.nativeElement as HTMLAudioElement).load();
+  }
+
+  playPause() {
+    if (this.playing) {
+      (this.audio.nativeElement as HTMLAudioElement).pause();
+      this.playing = false;
+    } else {
+      (this.audio.nativeElement as HTMLAudioElement).play();
+      this.playing = true;
     }
-
-    loadAudio() {
-        (this.audio.nativeElement as HTMLAudioElement).load();
-    }
-
-    playPause() {
-        if (this.playing) {
-            (this.audio.nativeElement as HTMLAudioElement).pause();
-            this.playing = false;
-        } else {
-            (this.audio.nativeElement as HTMLAudioElement).play();
-            this.playing = true;
-        }
-    }
+  }
 }
