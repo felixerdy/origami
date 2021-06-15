@@ -51,7 +51,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 * Using sockit.IO for receiving data from VR App
 */
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-const config: SocketIoConfig = { url: environment.apiURL, options: {} };
+const config: SocketIoConfig = { url: 'https://unity-ionic-v5.herokuapp.com/', options: {} };
 
 
 @NgModule({
