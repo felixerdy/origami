@@ -155,7 +155,7 @@
         </ion-toggle>
       </ion-item>
       <app-map featureType="point" markerType="circle" [(feature)]="task.question.direction.position"
-        *ngIf="viewDirectionSetPosition">
+        *ngIf="viewDirectionSetPosition" [isVirtualWorld]="isVirtualWorld">
       </app-map>
     </div>
     <answer-type [(answer)]="task.answer" [taskType]="task.category" [isVirtualWorld]="isVirtualWorld"></answer-type>

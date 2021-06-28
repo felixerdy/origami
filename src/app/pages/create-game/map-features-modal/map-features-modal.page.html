@@ -88,12 +88,12 @@
       <ion-toggle color="danger" [(ngModel)]="features.track"></ion-toggle>
     </ion-item>
 
-    <ion-item *ngIf='!isVirtualWorld'>
+    <ion-item>
       <ion-label>Aktueller Straßenabschnitt</ion-label>
       <ion-toggle color="danger" [(ngModel)]="features.streetSection"></ion-toggle>
     </ion-item>
 
-    <ion-item style="--border-style: none;" *ngIf='!isVirtualWorld'>
+    <ion-item style="--border-style: none;">
       <ion-label>Reduzierter Kartenausschnitt</ion-label>
       <ion-toggle color="danger" [(ngModel)]="features.reducedInformation"></ion-toggle>
     </ion-item>
@@ -108,7 +108,7 @@
     </ion-range>
   </ion-item>
 
-    <ion-item *ngIf='!isVirtualWorld'>
+    <ion-item>
       <ion-label>Hervorhebung von Landmarken</ion-label>
       <ion-toggle color="danger" [(ngModel)]="features.landmarks"></ion-toggle>
     </ion-item>

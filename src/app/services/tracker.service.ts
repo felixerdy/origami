@@ -88,7 +88,7 @@ export class TrackerService {
       this.avatarPositionWatch = this.geolocateService.avatarGeolocationSubscription.subscribe(avatarPosition => {
         // Set timestamp (to do: timestamp)
         if (this.avatarPosition === undefined) {
-          // Initial target distance that will be displayed in VR app
+          // Initial avatar position
           this.avatarPosition = new AvatarPosition(0, new Coords(environment.initialAvatarLoc.lat, environment.initialAvatarLoc.lng));
         } else {
           this.avatarPosition = new AvatarPosition(0, new Coords(parseFloat(avatarPosition["z"]) / 111200, parseFloat(avatarPosition["x"]) / 111000));
@@ -180,7 +180,7 @@ export class TrackerService {
     this.events.push({
       ...event,
       timestamp: new Date().toISOString(),
-      position: this.position,
+      position: (this.isVirtualWorld ? this.avatarPosition : this.position),
       mapViewport: {
         bounds: this.map.getBounds(),
         center: this.map.getCenter(),

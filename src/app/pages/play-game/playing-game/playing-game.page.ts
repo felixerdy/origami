@@ -414,8 +414,8 @@ export class PlayingGamePage implements OnInit, OnDestroy {
 
     // Set bounds of VR world 
     var bounds = [
-      [0.0002307207207, 0.0003628597122], // Southwest coordinates
-      [0.003717027207, 0.004459082914] // Northeast coordinates
+      [0.0002307207207 - 0.004, 0.0003628597122 - 0.004], // Southwest coordinates
+      [0.003717027207 + 0.004, 0.004459082914 + 0.004] // Northeast coordinates
     ];
 
     this.map = new mapboxgl.Map({
@@ -460,7 +460,12 @@ export class PlayingGamePage implements OnInit, OnDestroy {
         (avatarPosition) => {
           this.trackerService.addWaypoint({});
 
-          this.avatarLastKnownPosition = new AvatarPosition(0, new Coords(parseFloat(avatarPosition["z"]) / 111200, parseFloat(avatarPosition["x"]) / 111000));
+          if (this.avatarLastKnownPosition === undefined) {
+            // Initial avatar's positoin to measure distance to target in nav-arrow tasks
+            this.avatarLastKnownPosition = new AvatarPosition(0, new Coords(environment.initialAvatarLoc.lat, environment.initialAvatarLoc.lng));
+          } else {
+            this.avatarLastKnownPosition = new AvatarPosition(0, new Coords(parseFloat(avatarPosition["z"]) / 111200, parseFloat(avatarPosition["x"]) / 111000));
+          }
 
           if (this.task && !PlayingGamePage.showSuccess) {
             if (this.task.answer.type == AnswerType.POSITION) {
@@ -1176,6 +1181,13 @@ export class PlayingGamePage implements OnInit, OnDestroy {
       this.landmarkControl.setSearchArea(this.task.question.area);
     }
 
+    // VR world (calcualte initial distance to target in nav-arrow tasks)
+    if (this.isVirtualWorld && this.task.answer.mode == TaskMode.NAV_ARROW) {
+      const waypoint = this.task.answer.position.geometry.coordinates;
+      this.targetDistance = this.calculateDistanceToTarget(waypoint)
+      this.UpdateInitialArrowDirection();
+    }
+
     this.changeDetectorRef.detectChanges();
   }
 
@@ -1356,14 +1368,25 @@ export class PlayingGamePage implements OnInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  userDidArrive(waypoint) {
-    this.targetDistance = this.helperService.getDistanceFromLatLonInM(
+  calculateDistanceToTarget(waypoint): number {
+    return this.helperService.getDistanceFromLatLonInM(
       waypoint[1],
       waypoint[0],
       (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude),
       (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude)
     );
-    return this.targetDistance < PlayingGamePage.triggerTreshold;
+  }
+
+  UpdateInitialArrowDirection() {
+    const destCoords = this.task.answer.position.geometry.coordinates;
+    const bearing = this.helperService.bearing(
+      this.avatarLastKnownPosition.coords.latitude,
+      this.avatarLastKnownPosition.coords.longitude,
+      destCoords[1],
+      destCoords[0]
+    );
+
+    this.targetHeading = 360 - (this.compassHeading - bearing);
   }
 
   ngOnDestroy() { }

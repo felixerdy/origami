@@ -267,10 +267,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
       ]
     };
 
-    // Set bounds to only the VR world 
+    // Set bounds of VR world 
     var bounds = [
-      [0.0002307207207, 0.0003628597122], // Southwest coordinates
-      [0.003717027207, 0.004459082914] // Northeast coordinates
+      [0.0002307207207 - 0.004, 0.0003628597122 - 0.004], // Southwest coordinates
+      [0.003717027207 + 0.004, 0.004459082914 + 0.004] // Northeast coordinates
     ];
 
     this.map = new mapboxgl.Map({
