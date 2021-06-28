@@ -1,15 +1,15 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button *ngIf="taskIndex>0" color="dark" (click)="previousTask()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-      </ion-button>
       <ion-button color="dark" (click)="navigateHome()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
     <ion-title *ngIf="game">{{ game.name }}</ion-title>
     <ion-buttons slot="end">
+      <ion-button *ngIf="taskIndex>0" color="dark" (click)="previousTask()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
       <ion-button color="dark" (click)="nextTask()">
         <ion-icon name="arrow-forward"></ion-icon>
       </ion-button>
