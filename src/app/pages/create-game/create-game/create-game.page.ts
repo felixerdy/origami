@@ -22,7 +22,7 @@ export class CreateGamePage implements OnInit {
   }
 
   navigateEditGame() {
-    this.navCtrl.navigateForward('edit-game');
+    this.navCtrl.navigateForward(`edit-game-list/${"RealWorld"}`);
   }
 
 }

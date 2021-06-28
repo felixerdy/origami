@@ -7,6 +7,9 @@ import {
   DeviceOrientationCompassHeading
 } from '@ionic-native/device-orientation/ngx';
 
+// VR world, SockitIO
+import { Socket } from 'ngx-socket-io';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,10 +20,17 @@ export class OrigamiOrientationService {
 
   deviceOrientationSubscription: any;
 
-  constructor(private platform: Platform, private deviceOrientation: DeviceOrientation) { }
+  // VR world
+  public avatarOrientationSubscription: Observable<any>;
+  isVirtualWorld: boolean = false;
 
-  init() {
+
+  constructor(private platform: Platform, private deviceOrientation: DeviceOrientation, private socket: Socket) { }
+
+  init(isVirtualWorld: boolean) {
+    this.isVirtualWorld = isVirtualWorld;
     console.log(this.platform.platforms());
+
     if (this.platform.is('mobile') && this.platform.is('capacitor') && !this.platform.is('mobileweb')) {
       // native
       this.deviceOrientationSubscription = this.deviceOrientation
@@ -41,9 +51,18 @@ export class OrigamiOrientationService {
       }
     }
 
-    this.orientationSubscription = new Observable((subscriber: Subscriber<number>) => {
-      this.orientationSubscriber = subscriber;
-    }).pipe(shareReplay());
+    if (!isVirtualWorld) {
+      this.orientationSubscription = new Observable((subscriber: Subscriber<number>) => {
+        this.orientationSubscriber = subscriber;
+      }).pipe(shareReplay());
+    } else {
+      // VR world
+      this.avatarOrientationSubscription = Observable.create((observer: Subscriber<any>) => {
+        this.socket.on('updateAvatarDirection', (avatarHeading) => {
+          observer.next(avatarHeading["angleValue"]);
+        });
+      }).pipe(shareReplay());
+    }
   }
 
   handleDeviceOrientation = (event: DeviceOrientationEvent) => {
@@ -53,6 +72,9 @@ export class OrigamiOrientationService {
   clear() {
     window.removeEventListener('deviceorientation', this.handleDeviceOrientation, true);
     window.removeEventListener('deviceorientationabsolute', this.handleDeviceOrientation, true);
-    this.orientationSubscriber.unsubscribe();
+
+    if (!this.isVirtualWorld) {
+      this.orientationSubscriber.unsubscribe();
+    }
   }
 }

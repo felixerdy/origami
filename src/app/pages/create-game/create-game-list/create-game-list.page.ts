@@ -30,6 +30,8 @@ export class CreateGameListPage implements OnInit {
   game: Game;
   reorder: Boolean = false;
 
+  isVirtualWorld: boolean = false;
+
   @ViewChild(IonReorderGroup) reorderGroup: IonReorderGroup;
 
   // dismiss modal on hardware back button
@@ -80,7 +82,7 @@ export class CreateGameListPage implements OnInit {
     // });
   }
 
-  async presentTaskModal(type: string = "nav", task: any = null) {
+  async presentTaskModal(type: string = "nav", task: any = null, isVirtualWorld: boolean = this.isVirtualWorld) {
     console.log(task);
 
     const modal: HTMLIonModalElement = await this.modalController.create({
@@ -90,6 +92,7 @@ export class CreateGameListPage implements OnInit {
       componentProps: {
         type,
         task,
+        isVirtualWorld
       },
     });
 
@@ -161,7 +164,7 @@ export class CreateGameListPage implements OnInit {
 
   navigateToOverview() {
     console.log("navigate");
-    this.navCtrl.navigateForward("create-game/create-game-overview");
+    this.navCtrl.navigateForward(`create-game/create-game-overview/${"RealWorld"}`);
   }
 
   async showPopover(ev: any, text: string) {

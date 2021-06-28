@@ -1,0 +1,13 @@
+ion-card {
+    text-align: center;
+}
+
+@media only screen and (min-width: 575px) {
+    ion-icon {
+        position: absolute;
+        left: 0;
+        top: -15px;
+        font-size: 6rem;
+        transform: rotate(-10deg);
+    }
+}

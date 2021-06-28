@@ -1,0 +1,22 @@
+.map {
+    width: 100%;
+    height: 30%;
+    min-height: 230px;
+  }
+  
+  .center {
+    display: flex;
+    justify-content: center;
+  }
+  
+  ion-chip > ion-icon {
+    margin: 0;
+  }
+  
+  ion-card > ion-card-header {
+    text-align: center;
+  }
+  
+  ion-avatar > img {
+    border-radius: 0;
+  }

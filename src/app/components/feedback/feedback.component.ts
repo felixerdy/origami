@@ -13,6 +13,11 @@ import { Plugins, Capacitor, GeolocationPosition } from '@capacitor/core';
 import centroid from '@turf/centroid';
 import { OrigamiOrientationService } from 'src/app/services/origami-orientation.service';
 
+// VR world
+import { AvatarPosition } from 'src/app/models/avatarPosition';
+import { Coords } from 'src/app/models/coords'
+import { environment } from 'src/environments/environment';
+
 
 enum FeedbackType {
     Correct,
@@ -34,6 +39,13 @@ export class FeedbackComponent {
     private lastKnownPosition: GeolocationPosition;
     private Math: Math = Math;
     private audioPlayer: HTMLAudioElement = new Audio();
+
+    // VR world
+    private avatarPositionSubscription: Subscription;
+    private avatarOrientationSubscription: Subscription;
+    avatarLastKnownPosition: AvatarPosition;
+    private waypoint: any;
+    isVirtualWorld: boolean = false;
 
     showFeedback = false;
     private feedback: any = {
@@ -59,7 +71,7 @@ export class FeedbackComponent {
 
     private DIRECTION_TRESHOLD = 30;
 
-    constructor(private orientationService: OrigamiOrientationService, private changeDetectorRef: ChangeDetectorRef) { }
+     constructor(private orientationService: OrigamiOrientationService, private changeDetectorRef: ChangeDetectorRef) { }
 
     init(map: any, geolocationService: OrigamiGeolocationService, helperService: HelperService, toastController: ToastController, trackerService: TrackerService, playingGamePage: PlayingGamePage) {
         this.map = map;
@@ -91,23 +103,56 @@ export class FeedbackComponent {
 
         this.audioPlayer.src = 'assets/sounds/zapsplat_multimedia_alert_musical_warm_arp_005_46194.mp3';
 
-        this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe((position: GeolocationPosition) => {
-            this.lastKnownPosition = position;
+        // VR world (to check type of the game)
+        this.isVirtualWorld = playingGamePage.isVirtualWorld;
 
-            if (this.task && !PlayingGamePage.showSuccess) {
-                if (this.task.answer.type == AnswerType.POSITION) {
+        if (!this.isVirtualWorld) {
+            this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe((position: GeolocationPosition) => {
+                this.lastKnownPosition = position;
 
-                    const waypoint = this.task.answer.position.geometry.coordinates;
+                if (this.task && !PlayingGamePage.showSuccess) {
+                    if (this.task.answer.type == AnswerType.POSITION) {
 
-                    if (this.userDidArrive(waypoint) && !this.task.settings.confirmation && !this.showFeedback) {
-                        this.onWaypointReached();
+                        const waypoint = this.task.answer.position.geometry.coordinates;
+
+                        if (this.userDidArrive(waypoint) && !this.task.settings.confirmation && !this.showFeedback) {
+                            this.onWaypointReached();
+                        }
                     }
                 }
-            }
-        });
-        this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe((heading: number) => {
-            this.direction = heading;
-        });
+            });
+
+            this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe((heading: number) => {
+                this.direction = heading;
+            });
+
+        } else {
+            // VR world
+            this.avatarPositionSubscription = this.geolocationService.avatarGeolocationSubscription.subscribe(avatarPosition => {
+
+                if (this.avatarLastKnownPosition === undefined) {
+                    // Initial avatar's Loc to measure target distance that will be displayed in VR app
+                    this.avatarLastKnownPosition = new AvatarPosition(0, new Coords(environment.initialAvatarLoc.lat, environment.initialAvatarLoc.lng));
+                } else if (!Number.isNaN(parseFloat(avatarPosition["z"]))) {
+                    this.avatarLastKnownPosition = new AvatarPosition(0, new Coords(parseFloat(avatarPosition["z"]) / 111200, parseFloat(avatarPosition["x"]) / 111000));
+                }
+
+                if (this.task && !PlayingGamePage.showSuccess) {
+                    if (this.task.answer.type == AnswerType.POSITION) {
+                        this.waypoint = this.task.answer.position.geometry.coordinates;
+                        
+                        if (this.userDidArrive(this.waypoint) && !this.task.settings.confirmation && !this.showFeedback) {
+                            this.onWaypointReached();
+                        }
+                    }
+                }
+            });
+
+            // Avatar's direction
+            this.avatarOrientationSubscription = this.orientationService.avatarOrientationSubscription.subscribe(avatarHeading => {
+                this.direction = avatarHeading;
+            });
+        }
     }
 
     public setTask(task: Task) {
@@ -137,7 +182,7 @@ export class FeedbackComponent {
             answer = {
                 target: waypoint,
                 position: this.lastKnownPosition,
-                distance: this.helperService.getDistanceFromLatLonInM(waypoint[1], waypoint[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude),
+                distance: this.helperService.getDistanceFromLatLonInM(waypoint[1], waypoint[0], (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude)),
                 correct: arrived
             };
             isCorrect = arrived;
@@ -151,7 +196,7 @@ export class FeedbackComponent {
         if (this.task.type == 'theme-loc') {
             if (this.map.getSource('marker-point')) {
                 const clickPosition = this.map.getSource('marker-point')._data.geometry.coordinates;
-                const distance = this.helperService.getDistanceFromLatLonInM(clickPosition[1], clickPosition[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude);
+                const distance = this.helperService.getDistanceFromLatLonInM(clickPosition[1], clickPosition[0], (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude));
                 isCorrect = distance < PlayingGamePage.triggerTreshold;
                 answer = {
                     clickPosition,
@@ -477,7 +522,7 @@ export class FeedbackComponent {
         console.log(options);
         if (this.task.answer.type == AnswerType.POSITION) {
             const waypoint = this.task.answer.position.geometry.coordinates;
-            const distance = this.helperService.getDistanceFromLatLonInM(waypoint[1], waypoint[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude);
+            const distance = this.helperService.getDistanceFromLatLonInM(waypoint[1], waypoint[0], (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude));
             const evalDistance = distance - (PlayingGamePage.triggerTreshold as number);
             if (evalDistance > 10) {
                 this.feedback.hint = `Du bist ${distance.toFixed(1)} m vom Ziel entfernt.`;
@@ -547,7 +592,7 @@ export class FeedbackComponent {
                 type: 'geojson',
                 data: {
                     type: 'Point',
-                    coordinates: [this.lastKnownPosition.coords.longitude, this.lastKnownPosition.coords.latitude]
+                    coordinates: [(this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude)]
                 }
             });
             this.map.addLayer({
@@ -568,7 +613,7 @@ export class FeedbackComponent {
                 type: 'geojson',
                 data: {
                     type: 'Point',
-                    coordinates: [this.lastKnownPosition.coords.longitude, this.lastKnownPosition.coords.latitude]
+                    coordinates: [this.lastKnownPosition.coords.longitude, (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude)]
                 }
             });
             this.map.addLayer({
@@ -604,7 +649,7 @@ export class FeedbackComponent {
             if (this.task.question.direction?.position) {
                 position = this.task.question.direction.position.geometry.coordinates;
             } else {
-                position = [this.lastKnownPosition.coords.longitude, this.lastKnownPosition.coords.latitude];
+                position = [(this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude)];
             }
 
             if (this.task.question.direction?.bearing) {
@@ -686,8 +731,14 @@ export class FeedbackComponent {
     }
 
     public remove(): void {
-        this.positionSubscription.unsubscribe();
-        this.deviceOrientationSubscription.unsubscribe();
+        if (!this.isVirtualWorld) {
+            this.positionSubscription.unsubscribe();
+            this.deviceOrientationSubscription.unsubscribe();
+        } else {
+            // VR world
+            this.avatarPositionSubscription.unsubscribe();
+            this.avatarOrientationSubscription.unsubscribe();
+        }
     }
 
     public onWaypointReached() {
@@ -701,8 +752,8 @@ export class FeedbackComponent {
         const targetDistance = this.helperService.getDistanceFromLatLonInM(
             waypoint[1],
             waypoint[0],
-            this.lastKnownPosition.coords.latitude,
-            this.lastKnownPosition.coords.longitude
+            (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude),
+            (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude)
         );
         this.playingGamePage.targetDistance = targetDistance;
         return targetDistance < PlayingGamePage.triggerTreshold;
@@ -736,14 +787,14 @@ export class FeedbackComponent {
             answer = {
                 target: waypoint,
                 position: this.lastKnownPosition,
-                distance: this.helperService.getDistanceFromLatLonInM(waypoint[1], waypoint[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude),
+                distance: this.helperService.getDistanceFromLatLonInM(waypoint[1], waypoint[0], (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude)),
                 correct: arrived
             };
         }
 
         if (this.task.type == 'theme-loc') {
             if (this.map.getSource('marker-point')) {
-                const distance = this.helperService.getDistanceFromLatLonInM(clickPosition[1], clickPosition[0], this.lastKnownPosition.coords.latitude, this.lastKnownPosition.coords.longitude);
+                const distance = this.helperService.getDistanceFromLatLonInM(clickPosition[1], clickPosition[0], (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.latitude : this.lastKnownPosition.coords.latitude), (this.isVirtualWorld ? this.avatarLastKnownPosition.coords.longitude : this.lastKnownPosition.coords.longitude));
                 answer = {
                     clickPosition,
                     distance,

@@ -22,6 +22,9 @@ export class GameDetailPage implements OnInit {
   activities: any[];
   points: any[];
 
+  // VR world
+  isVirtualWorld: boolean = false;
+
   constructor(public navCtrl: NavController, private route: ActivatedRoute, private gamesService: GamesService) { }
 
   ngOnInit() {
@@ -30,6 +33,12 @@ export class GameDetailPage implements OnInit {
         .then(res => res.content)
         .then(game => {
           this.game = game;
+
+          // VR world
+          // Check game type either real or VR world
+          if (game.isVRWorld !== undefined && game.isVRWorld != false) {
+            this.isVirtualWorld = true;
+          }
         })
         .finally(() => {
           console.log(this.game);
@@ -71,7 +80,11 @@ export class GameDetailPage implements OnInit {
   }
 
   startGame() {
-    this.navCtrl.navigateForward(`play-game/playing-game/${this.game._id}`);
+    let bundle = {
+      id: this.game._id,
+      isVRWorld: this.isVirtualWorld
+    }
+    this.navCtrl.navigateForward(`play-game/playing-game/${JSON.stringify(bundle)}`);
   }
 
 }

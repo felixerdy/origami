@@ -14,8 +14,13 @@ export class TrackControl {
     private trackType: TrackType;
     private positionSubscription: Subscription;
 
-    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService) {
+    // VR world
+    isVirtualWorld: boolean = false;
+    private avatarPositionSubscription: Subscription;
+
+    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService, isVirtualWorld: boolean) {
         this.map = map;
+        this.isVirtualWorld = isVirtualWorld; // VR world (to check game type)
         const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--ion-color-primary');
         const dangerColor = getComputedStyle(document.documentElement).getPropertyValue('--ion-color-danger');
 
@@ -27,17 +32,31 @@ export class TrackControl {
                 coordinates: []
             }
         };
-        this.positionSubscription = this.geolocationService.geolocationSubscription
-            .pipe(filter(p => p.coords.accuracy <= 5))
-            .subscribe(position => {
-                this.path.geometry.coordinates.push([
-                    position.coords.longitude,
-                    position.coords.latitude
-                ]);
-                if (this.map && this.map.getSource('track')) {
-                    this.map.getSource('track').setData(this.path);
-                }
-            });
+        if (!isVirtualWorld) {
+            this.positionSubscription = this.geolocationService.geolocationSubscription
+                .pipe(filter(p => p.coords.accuracy <= 5))
+                .subscribe(position => {
+                    this.path.geometry.coordinates.push([
+                        position.coords.longitude,
+                        position.coords.latitude
+                    ]);
+                    if (this.map && this.map.getSource('track')) {
+                        this.map.getSource('track').setData(this.path);
+                    }
+                });
+        } else {
+            // VR world
+            this.avatarPositionSubscription = this.geolocationService.avatarGeolocationSubscription.subscribe(
+                avatarPosition => {
+                    this.path.geometry.coordinates.push([
+                        parseFloat(avatarPosition["x"]) / 111000,
+                        parseFloat(avatarPosition["z"]) / 111200
+                    ]);
+                    if (this.map && this.map.getSource('track')) {
+                        this.map.getSource('track').setData(this.path);
+                    }
+                });
+        }
 
         this.map.addSource('track', { type: 'geojson', data: this.path });
         this.map.addLayer({
@@ -99,7 +118,12 @@ export class TrackControl {
                 coordinates: []
             }
         };
-        this.positionSubscription.unsubscribe();
+
+        if (!this.isVirtualWorld) {
+            this.positionSubscription.unsubscribe();
+        } else {
+            this.avatarPositionSubscription.unsubscribe();
+        }
         // window.navigator.geolocation.clearWatch(this.trackPositionWatch);
     }
 }

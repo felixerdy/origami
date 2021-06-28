@@ -4,6 +4,10 @@ import { NavController } from '@ionic/angular';
 
 import { GamesService } from '../../../services/games.service';
 
+// VR world
+import { ActivatedRoute } from '@angular/router';
+
+
 @Component({
   selector: 'app-play-game-list',
   templateUrl: './play-game-list.page.html',
@@ -12,13 +16,35 @@ import { GamesService } from '../../../services/games.service';
 export class PlayGameListPage implements OnInit {
   games: any;
 
+  // VR world
+  isVirtualWorld: boolean = false;
+
   constructor(
     public navCtrl: NavController,
-    private gamesService: GamesService
+    private gamesService: GamesService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.gamesService.getGames(true).then(res => res.content).then(games => (this.games = games.reverse()));
+    // VR world
+    // to seperate realworld games from VR ones in view
+    this.route.params.subscribe((params) => {
+      if (params.worldType === "VRWorld") {
+        this.isVirtualWorld = true;
+      }
+    });
+
+    this.gamesService.getGames(false).then(res => res.content).then(games => {
+      this.games = games.reverse();
+    
+      if (!this.isVirtualWorld) {
+        this.games = this.games.filter(game => game.isVRWorld != true); // Exclude VR games
+        console.log("-RW-this.games:", this.games);
+      } else {
+        this.games = this.games.filter(game => game.isVRWorld === true); // Get VR games
+        console.log("-VR_W-this.games:", this.games);
+      }
+    });
   }
 
   doRefresh(event) {

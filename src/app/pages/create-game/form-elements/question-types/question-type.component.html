@@ -144,6 +144,7 @@
     featureType="geometry"
     drawTheme="searchArea"
     [(feature)]="question.geometry"
+    [isVirtualWorld]="isVirtualWorld"
   ></app-map>
 </div>
 
@@ -186,6 +187,7 @@
     featureType="geometry"
     drawTheme="searchArea"
     [(feature)]="question.geometry"
+    [isVirtualWorld]="isVirtualWorld"
   ></app-map>
 </div>
 
@@ -224,6 +226,7 @@
     featureType="geometry"
     drawTheme="searchArea"
     [(feature)]="question.geometry"
+    [isVirtualWorld]="isVirtualWorld"
   ></app-map>
 </div>
 
@@ -241,7 +244,7 @@
     >
     </ion-icon>
   </h5>
-  <app-map featureType="direction" [(feature)]="question.direction"></app-map>
+  <app-map featureType="direction" [(feature)]="question.direction" [isVirtualWorld]="isVirtualWorld"></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_DIRECTION_MARKER">
@@ -258,7 +261,7 @@
     >
     </ion-icon>
   </h5>
-  <app-map featureType="direction" [(feature)]="question.direction"></app-map>
+  <app-map featureType="direction" [(feature)]="question.direction" [isVirtualWorld]="isVirtualWorld"></app-map>
 </div>
 
 <div *ngIf="question.type == questionTypeEnum.MAP_DIRECTION_PHOTO">

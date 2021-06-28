@@ -4,6 +4,9 @@ import { NavController } from '@ionic/angular';
 
 import { GamesService } from '../../../services/games.service';
 
+// VR world
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-edit-game-list',
   templateUrl: './edit-game-list.page.html',
@@ -12,17 +15,34 @@ import { GamesService } from '../../../services/games.service';
 export class EditGameListPage implements OnInit {
   games: any;
 
+  // VR world
+  isVirtualWorld: boolean = false;
+
   constructor(
     public navCtrl: NavController,
-    private gamesService: GamesService
-  ) {}
+    private gamesService: GamesService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
+    // VR world
+    // to seperate realworld games from VR ones in view
+    this.route.params.subscribe((params) => {
+      if (params.worldType === "VRWorld") {
+        this.isVirtualWorld = true;
+      }
+    });
+
     this.gamesService.getUserGames().then((res) => {
       console.log(res);
       this.games = res.reverse();
+
+      if (!this.isVirtualWorld) {
+        this.games = this.games.filter(game => game.isVRWorld != true); // Exclude VR games
+      } else {
+        this.games = this.games.filter(game => game.isVRWorld === true); // Get VR games
+      }
     });
-    // .then((games) => (this.games = games.reverse()));
   }
 
   doRefresh(event) {
@@ -37,11 +57,11 @@ export class EditGameListPage implements OnInit {
       .getUserGames()
       .then(
         (games) =>
-          (this.games = games
-            .filter((game) =>
-              game.name.toLowerCase().includes(event.detail.value.toLowerCase())
-            )
-            .reverse())
+        (this.games = games
+          .filter((game) =>
+            game.name.toLowerCase().includes(event.detail.value.toLowerCase())
+          )
+          .reverse())
       );
   }
 

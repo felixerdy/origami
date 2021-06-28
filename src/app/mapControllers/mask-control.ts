@@ -16,17 +16,34 @@ export class MaskControl {
     private positionSubscription: Subscription;
     private maskType: MaskType = MaskType.Disabled;
 
+    // VR world
+    isVirtualWorld: boolean = false;
+    private avatarPositionSubscription: Subscription;
+
     private map: MapboxMap;
 
     private isInitalized = false;
 
     private coords: number[];
 
-    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService) {
+    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService, isVirtualWorld: boolean) {
         this.map = map;
-        this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(position => {
-            this.coords = [position.coords.longitude, position.coords.latitude];
-        });
+
+        // VR world (to check game type)
+        this.isVirtualWorld = isVirtualWorld;
+
+        if (!isVirtualWorld) {
+            this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(
+                position => {
+                this.coords = [position.coords.longitude, position.coords.latitude];
+            });
+        } else {
+            // VR world
+            this.avatarPositionSubscription = this.geolocationService.avatarGeolocationSubscription.subscribe(
+                avatarPosition => {
+                this.coords = [parseFloat(avatarPosition["x"]) / 111000, parseFloat(avatarPosition["z"]) / 111200];
+            });
+        }
     }
 
     public setType(type: MaskType): void {
@@ -96,7 +113,7 @@ export class MaskControl {
                 this.reset();
                 break;
             case MaskType.Enabled:
-                if (this.map.getLayoutProperty('circle-mask', 'visibility') == 'none'){
+                if (this.map.getLayoutProperty('circle-mask', 'visibility') == 'none') {
                     this.map.setLayoutProperty('circle-mask', 'visibility', 'visible');
                 }
                 break;
@@ -105,6 +122,11 @@ export class MaskControl {
 
     public remove(): void {
         this.reset();
-        this.positionSubscription.unsubscribe();
+
+        if (!this.isVirtualWorld) {
+            this.positionSubscription.unsubscribe();
+        } else {
+            this.avatarPositionSubscription.unsubscribe();
+        }
     }
 }

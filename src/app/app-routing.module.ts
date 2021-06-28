@@ -16,7 +16,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'play-game/play-game-list',
+    path: 'play-game/play-game-list/:worldType',
     loadChildren: () =>
       import('./pages/play-game/play-game-list/play-game-list.module').then(
         (m) => m.PlayGameListPageModule
@@ -30,7 +30,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'play-game/playing-game/:id',
+    path: 'play-game/playing-game/:bundle',
     loadChildren: () =>
       import('./pages/play-game/playing-game/playing-game.module').then(
         (m) => m.PlayingGamePageModule
@@ -45,7 +45,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'create-game/create-game-overview',
+    path: 'create-game/create-game-overview/:worldType',
     loadChildren: () =>
       import(
         './pages/create-game/create-game-overview/create-game-overview.module'
@@ -69,7 +69,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'edit-game',
+    path: 'edit-game-list/:worldType',
     loadChildren: () =>
       import('./pages/edit-game/edit-game-list/edit-game-list.module').then(
         (m) => m.EditGameListPageModule
@@ -165,6 +165,23 @@ const routes: Routes = [
       import('./pages/showroom/task-showroom/task-showroom.module').then(
         (m) => m.TaskShowroomPageModule
       ),
+  },
+  {
+    path: 'create-game-menu',
+    loadChildren: () => import('./pages/create-game/create-game-menu/create-game-menu.module').then( m => m.CreateGameMenuPageModule)
+  },
+  {
+    path: 'create-game-virtual',
+    loadChildren: () => import('./pages/create-game/create-game-virtual/create-game-virtual.module').then( m => m.CreateGameVirtualPageModule)
+  },
+  {
+    path: 'create-game-virtual-list',
+    loadChildren: () => import('./pages/create-game/create-game-virtual-list/create-game-virtual-list.module').then( m => m.CreateGameVirtualListPageModule)
+  },
+  {
+    path: 'play-game/play-game-menu',
+    loadChildren: () => import('./pages/play-game/play-game-menu/play-game-menu.module').then( 
+      m => m.PlayGameMenuPageModule)
   },
 ];
 @NgModule({

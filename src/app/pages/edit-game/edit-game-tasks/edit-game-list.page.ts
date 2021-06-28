@@ -30,6 +30,9 @@ export class EditGameListPage implements OnInit {
   game: Game;
   reorder: Boolean = false;
 
+  // VR world
+  isVirtualWorld: boolean = false;
+
   @ViewChild(IonReorderGroup) reorderGroup: IonReorderGroup;
 
   // dismiss modal on hardware back button
@@ -55,6 +58,11 @@ export class EditGameListPage implements OnInit {
           this.game = game;
           this.gameFactory.flushGame();
           this.gameFactory.addGameInformation(this.game);
+
+          // VR world
+          if( game.isVRWorld !== undefined &&  game.isVRWorld != false){
+            this.isVirtualWorld = true;
+          }
         });
     });
   }
@@ -88,7 +96,7 @@ export class EditGameListPage implements OnInit {
     // });
   }
 
-  async presentTaskModal(type: string = "nav", task: Task = null) {
+  async presentTaskModal(type: string = "nav", task: Task = null, isVirtualWorld: boolean = this.isVirtualWorld) {
     console.log(task);
 
     const modal: HTMLIonModalElement = await this.modalController.create({
@@ -98,6 +106,7 @@ export class EditGameListPage implements OnInit {
       componentProps: {
         type,
         task,
+        isVirtualWorld  // added to view VR world map instead of real map if true  
       },
     });
 

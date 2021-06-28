@@ -4,7 +4,7 @@
             (click)="showPopover($event, 'Dieser Zielort wird im Spiel mit einer Zielfahne auf der Karte angezeigt.')">
         </ion-icon>
     </h5>
-    <app-map featureType="point" drawTheme="nav" [(feature)]="answer.position"></app-map>
+    <app-map featureType="point" drawTheme="nav" [(feature)]="answer.position" [isVirtualWorld]="isVirtualWorld"></app-map>
 </div>
 
 <div *ngIf="answer.type == answerTypeEnum.MULTIPLE_CHOICE">

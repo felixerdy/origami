@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button color=dark defaultHref="start"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Wähle die Welt </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card id="create_card_create" (click)=navigateCreateRealGamePage() color="secondary">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="globe"></ion-icon> Echte Welt
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Mit realen Weltkarte .
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card id="create_card_create" (click)=navigateCreateVirtualGamePage() color="secondary">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="tv"></ion-icon> Virtuelle Welt 
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Mit virtueller Welt Umgebung .
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

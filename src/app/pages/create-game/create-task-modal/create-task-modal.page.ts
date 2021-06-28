@@ -32,6 +32,9 @@ export class CreateTaskModalPage implements OnInit {
   @Input() gameName = '';
   @Input() type = 'nav';
   @Input() task: any = {};
+  
+  // VR world
+  @Input() isVirtualWorld: boolean;
 
   tasks: any[] = [];
 
@@ -291,7 +294,8 @@ export class CreateTaskModalPage implements OnInit {
       component: MapFeaturesModalPage,
       backdropDismiss: false,
       componentProps: {
-        features: this.mapFeatures
+        features: this.mapFeatures,
+        isVirtualWorld: this.isVirtualWorld
       }
     });
     await modal.present();

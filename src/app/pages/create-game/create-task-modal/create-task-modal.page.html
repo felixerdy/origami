@@ -130,7 +130,7 @@
 
 
   <div>
-    <question-type [(question)]="task.question" [taskType]="task.category"></question-type>
+    <question-type [(question)]="task.question" [taskType]="task.category" [isVirtualWorld]="isVirtualWorld"></question-type>
     <!-- Search Area -->
     <div *ngIf="task.type == 'theme-loc' || task.type == 'theme-object'">
       <ion-text>
@@ -142,7 +142,7 @@
           </ion-label>
         </h5>
       </ion-text>
-      <app-map featureType="geometry" drawTheme="searchArea" [(feature)]="task.question.area"></app-map>
+      <app-map featureType="geometry" drawTheme="searchArea" [(feature)]="task.question.area" [isVirtualWorld]="isVirtualWorld"></app-map>
     </div>
     <div *ngIf="task.type == 'theme-direction' && task.question.type == 'TEXT' && task.answer.type == 'MAP_DIRECTION'">
       <ion-item lines="none">
@@ -158,7 +158,7 @@
         *ngIf="viewDirectionSetPosition">
       </app-map>
     </div>
-    <answer-type [(answer)]="task.answer" [taskType]="task.category"></answer-type>
+    <answer-type [(answer)]="task.answer" [taskType]="task.category" [isVirtualWorld]="isVirtualWorld"></answer-type>
   </div>
 
   <div *ngIf="task.settings">

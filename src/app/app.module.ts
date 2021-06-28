@@ -47,6 +47,13 @@ export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
+/* VR world
+* Using sockit.IO for receiving data from VR App
+*/
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: 'https://unity-ionic-v5.herokuapp.com/', options: {} };
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,6 +86,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     BrowserModule,
     HttpClientModule,
+    SocketIoModule.forRoot(config),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

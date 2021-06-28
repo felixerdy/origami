@@ -9,6 +9,9 @@ import { Feature, MultiPolygon, Polygon } from '@turf/helpers';
 import { HelperService } from './helper.service';
 import { OrigamiOrientationService } from './origami-orientation.service';
 
+// VR world, SockitIO
+import { Socket } from 'ngx-socket-io';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,21 +24,32 @@ export class OrigamiGeolocationService {
   public lastPointInBbox: BehaviorSubject<number[]> = new BehaviorSubject<number[]>(undefined);
   public lastPointInBboxDirection: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
 
+  // VR world
+  public avatarGeolocationSubscription: Observable<any>;
 
-  constructor(private helperService: HelperService, private orientationService: OrigamiOrientationService) {
 
-  }
+  constructor(private helperService: HelperService,
+    private orientationService: OrigamiOrientationService,
+    private socket: Socket) {}
 
-  init() {
-    this.geolocationSubscription = Observable.create((observer: Subscriber<GeolocationPosition>) => {
-      this.watchID = Plugins.Geolocation.watchPosition({ enableHighAccuracy: true }, (position, error) => {
-        if (error != null) {
-          observer.error(error);
-        }
-        observer.next(position);
-      });
-    }).pipe(shareReplay());
-    console.log('initializing geolocation service');
+  init(isVirtualWorld: boolean) {
+    if (!isVirtualWorld) {
+      this.geolocationSubscription = Observable.create((observer: Subscriber<GeolocationPosition>) => {
+        this.watchID = Plugins.Geolocation.watchPosition({ enableHighAccuracy: true }, (position, error) => {
+          if (error != null) {
+            observer.error(error);
+          }
+          observer.next(position);
+        });
+      }).pipe(shareReplay());
+    } else {
+      // VR world
+      this.avatarGeolocationSubscription = Observable.create((observer: Subscriber<any>) => {
+        this.socket.on('updateAvatarPosition', (data) => {
+          observer.next(data);
+        });
+      }).pipe(shareReplay());
+    }
   }
 
   getSinglePositionWatch(): Observable<GeolocationPosition> {

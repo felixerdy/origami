@@ -32,6 +32,9 @@ export class MapFeaturesModalPage implements OnInit, AfterViewInit {
 
   @Input() features: any = cloneDeep(standardMapFeatures);
 
+  // VR world
+  @Input() isVirtualWorld: boolean;
+
   constructor(
     public modalController: ModalController,
     private changeDetectorRef: ChangeDetectorRef
@@ -40,7 +43,12 @@ export class MapFeaturesModalPage implements OnInit, AfterViewInit {
   ngOnInit() {
     if (this.features == undefined) {
       this.features = cloneDeep(standardMapFeatures);
+
+      if (this.isVirtualWorld) {
+        this.features.rotation = "north"
+      }
     }
+
     this.onZoomChange();
 
     this.changeDetectorRef.detectChanges();

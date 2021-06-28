@@ -24,6 +24,9 @@ import { AnswerType, QuestionType } from 'src/app/models/types';
 import { LandmarkControl } from 'src/app/mapControllers/landmark-control';
 import { featureCollection } from '@turf/helpers';
 
+// VR world
+import { ActivatedRoute } from '@angular/router';
+
 
 
 @Component({
@@ -47,13 +50,17 @@ export class CreateGameOverviewPage implements AfterViewInit {
   geofence = false;
   landmarkControl: LandmarkControl;
 
+  // VR world
+  isVirtualWorld: boolean = false;
+
 
   constructor(
     public popoverController: PopoverController,
     public navCtrl: NavController,
     public gameFactory: GameFactoryService,
     public gamesService: GamesService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {
     this.lottieConfig = {
       path: 'assets/lottie/astronaut.json',
@@ -61,6 +68,16 @@ export class CreateGameOverviewPage implements AfterViewInit {
       autoplay: true,
       loop: true
     };
+  }
+
+  ngOnInit(){
+    // VR world
+    // to add game attribute that distinguish VR games from real ones
+    this.route.params.subscribe((params) => {
+      if (params.worldType === "VRWorld") {
+        this.isVirtualWorld = true;
+      }
+    });
   }
   ngAfterViewInit(): void {
     this.gameFactory.getGame().then(game => { this.game = game; }).finally(() => {
@@ -365,7 +382,8 @@ export class CreateGameOverviewPage implements AfterViewInit {
       bbox: this.mapSection ? this.draw.getAll() : null,
       mapSectionVisible: this.mapSectionVisible,
       geofence: this.geofence,
-      place: this.game.place
+      place: this.game.place,
+      isVRWorld: this.isVirtualWorld
     });
     console.log(this.gameFactory.game);
 

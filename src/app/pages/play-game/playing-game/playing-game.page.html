@@ -288,7 +288,7 @@
     </div>
   </div>
 
-  <p class="accuracy">
+  <p class="accuracy" *ngIf="!isVirtualWorld">
     GPS Genauigkeit: {{ lastKnownPosition?.coords.accuracy.toFixed(2) }} m
   </p>
 
