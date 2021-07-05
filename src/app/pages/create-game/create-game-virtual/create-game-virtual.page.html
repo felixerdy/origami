@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button color=dark defaultHref="start"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Stelle dein virtuelles Spiel zusammen</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card id="create_card_create" (click)=navigateCreateVirtualGamePage() color="secondary">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="add-circle"></ion-icon> Erstellen
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Gestalte ein neues Spiel.
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card id="create_card_edit" (click)=navigateEditVirtualGame() color="secondary">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="construct"></ion-icon> Bearbeiten
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Verändere ein bereits bestehendes Spiel.
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

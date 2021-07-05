@@ -15,18 +15,37 @@ export class PanControl {
     private positionSubscription: Subscription;
     private panType: PanType = PanType.True;
 
+    // VR world
+    isVirtualWorld: boolean = false;
+    private avatarPositionSubscription: Subscription;
+
     private map: MapboxMap;
 
-    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService) {
+    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService, isVirtualWorld: boolean) {
         this.map = map;
-        this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(
-            position => {
-                if (this.map != undefined && this.panType == PanType.Center) {
-                    this.map.setCenter([position.coords.longitude, position.coords.latitude]);
-                    // this.map.panTo([position.coords.longitude, position.coords.latitude]);
+
+        // VR world (to check type of the game)
+        this.isVirtualWorld = isVirtualWorld;
+
+        if (!isVirtualWorld) {
+            this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(
+                position => {
+                    if (this.map != undefined && this.panType == PanType.Center) {
+                        this.map.setCenter([position.coords.longitude, position.coords.latitude]);
+                        // this.map.panTo([position.coords.longitude, position.coords.latitude]);
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            // VR world
+            this.avatarPositionSubscription = this.geolocationService.avatarGeolocationSubscription.subscribe(
+                avatarPosition => {
+                    if (this.map != undefined && this.panType == PanType.Center) {
+                        this.map.setCenter([parseFloat(avatarPosition["x"]) / 111000, parseFloat(avatarPosition["z"]) / 111200]);
+                    }
+                }
+            );
+        }
     }
 
     public setType(type: PanType): void {
@@ -55,6 +74,10 @@ export class PanControl {
     }
 
     public remove(): void {
-        this.positionSubscription.unsubscribe();
+        if (!this.isVirtualWorld) {
+            this.positionSubscription.unsubscribe();
+        } else {
+            this.avatarPositionSubscription.unsubscribe();
+        }
     }
 }

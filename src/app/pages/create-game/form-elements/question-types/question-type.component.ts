@@ -15,6 +15,10 @@ export class QuestionTypeComponent implements OnInit, OnChanges {
     @Input() question: any;
     @Input() taskType: string;
 
+    // VR world
+    @Input() isVirtualWorld: boolean;
+    @Input() isVRMirrored: boolean;
+
     @Output() questionChange: EventEmitter<any> = new EventEmitter<any>(true);
 
     questionTypeEnum = QuestionType;

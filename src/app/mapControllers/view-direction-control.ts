@@ -3,6 +3,10 @@ import { Subscription } from 'rxjs';
 import { OrigamiGeolocationService } from '../services/origami-geolocation.service';
 import { OrigamiOrientationService } from '../services/origami-orientation.service';
 
+
+// VR world
+import { environment } from 'src/environments/environment';
+
 export enum ViewDirectionType {
     None,
     Continuous,
@@ -19,28 +23,62 @@ export class ViewDirectionControl {
 
     private isInitalized = false;
 
-    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService, private orientationService: OrigamiOrientationService) {
-        this.map = map;
+    // VR world
+    isVirtualWorld: boolean = false;
+    initialAvatarLoc: any;
+    private avatarPositionSubscription: Subscription;
+    private avatarOrientationSubscription: Subscription;
 
-        this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(
-            position => {
-                if (this.map != undefined && this.isInitalized) {
-                    this.map.getSource('viewDirection').setData({
-                        type: 'Point',
-                        coordinates: [position.coords.longitude, position.coords.latitude]
-                    });
+    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService, private orientationService: OrigamiOrientationService,
+        isVirtualWorld: boolean, initialAvatarLoc: any) {
+        this.map = map;
+        this.isVirtualWorld = isVirtualWorld;
+        this.initialAvatarLoc = initialAvatarLoc;
+
+        if (!isVirtualWorld) {
+            this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(
+                position => {
+                    if (this.map != undefined && this.isInitalized) {
+                        this.map.getSource('viewDirection').setData({
+                            type: 'Point',
+                            coordinates: [position.coords.longitude, position.coords.latitude]
+                        });
+                    }
                 }
-            }
-        );
-        this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe((heading: number) => {
-            if (this.map.getLayer('viewDirection')) {
-                this.map.setLayoutProperty(
-                    'viewDirection',
-                    'icon-rotate',
-                    heading - this.map.getBearing()
-                );
-            }
-        });
+            );
+
+            this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe((heading: number) => {
+                if (this.map.getLayer('viewDirection')) {
+                    this.map.setLayoutProperty(
+                        'viewDirection',
+                        'icon-rotate',
+                        heading - this.map.getBearing()
+                    );
+                }
+            });
+
+        } else {
+            // VR world
+            this.avatarPositionSubscription = this.geolocationService.avatarGeolocationSubscription.subscribe(
+                avatarPosition => {
+                    if (this.map != undefined && this.isInitalized) {
+                        this.map.getSource('viewDirection').setData({
+                            type: 'Point',
+                            coordinates: [parseFloat(avatarPosition["x"]) / 111000, parseFloat(avatarPosition["z"]) / 111200]
+                        });
+                    }
+                });
+
+                this.avatarOrientationSubscription = this.orientationService.avatarOrientationSubscription.subscribe(avatarHeading => {
+                    if (this.map.getLayer('viewDirection')) {
+                        this.map.setLayoutProperty(
+                            'viewDirection',
+                            'icon-rotate',
+                            avatarHeading - this.map.getBearing()
+                        );
+                    }
+                });
+        }
 
         this.map.loadImage(
             '/assets/icons/directionv2.png',
@@ -53,9 +91,7 @@ export class ViewDirectionControl {
                     type: 'geojson',
                     data: {
                         type: 'Point',
-                        coordinates: [
-                            0, 0
-                        ]
+                        coordinates: (this.isVirtualWorld ? [this.initialAvatarLoc.lng, this.initialAvatarLoc.lat] : [0, 0]) // VR World: update the inititial avatar position
                     }
                 });
                 this.map.addLayer({
@@ -126,9 +162,17 @@ export class ViewDirectionControl {
 
     public remove(): void {
         this.reset();
-        this.positionSubscription.unsubscribe();
-        if (this.deviceOrientationSubscription != undefined) {
-            this.deviceOrientationSubscription.unsubscribe();
+
+        if (!this.isVirtualWorld) {
+            this.positionSubscription.unsubscribe();
+            if (this.deviceOrientationSubscription != undefined) {
+                this.deviceOrientationSubscription.unsubscribe();
+            }
+        } else {
+            this.avatarPositionSubscription.unsubscribe();
+            if (this.avatarOrientationSubscription != undefined) {
+                this.avatarOrientationSubscription.unsubscribe();
+            }
         }
     }
 }

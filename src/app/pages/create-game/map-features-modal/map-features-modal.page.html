@@ -44,9 +44,9 @@
     <ion-item>
       <ion-label>Kartenrotation</ion-label>
       <select [(ngModel)]="features.rotation" interface="popover">
-        <option value="manual">manuell</option>
-        <option value="auto">automatisch</option>
-        <option value="button">automatisch auf Knopfdruck</option>
+        <option *ngIf='!isVirtualWorld' value="manual">manuell</option>
+        <option *ngIf='!isVirtualWorld' value="auto">automatisch</option>
+        <option *ngIf='!isVirtualWorld' value="button">automatisch auf Knopfdruck</option>
         <option value="north">genordet</option>
       </select>
     </ion-item>

@@ -15,8 +15,14 @@ export class RotationControl {
 
     private map: MapboxMap;
 
-    constructor(map: MapboxMap, private orientationService: OrigamiOrientationService) {
+    // VR world
+    private avatarOrientationSubscription: Subscription;
+    isVirtualWorld: boolean = false;
+
+    constructor(map: MapboxMap, private orientationService: OrigamiOrientationService, isVirtualWorld: boolean) {
         this.map = map;
+        this.isVirtualWorld = isVirtualWorld; // VR world (to check game type)
+
         this.rotate();
     }
 
@@ -37,8 +43,11 @@ export class RotationControl {
     }
 
     private reset(): void {
-        if (this.deviceOrientationSubscription != undefined)
+        if (!this.isVirtualWorld && this.deviceOrientationSubscription != undefined){
             this.deviceOrientationSubscription.unsubscribe();
+        } else if(this.isVirtualWorld && this.avatarOrientationSubscription != undefined){
+            this.avatarOrientationSubscription.unsubscribe();
+        }
     }
 
     private rotate(): void {
@@ -51,11 +60,20 @@ export class RotationControl {
                 this.map.dragRotate.disable();
                 this.map.touchZoomRotate.disableRotation();
 
-                this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe((heading: number) => {
-                    requestAnimationFrame(() => {
-                        this.map.rotateTo(heading, { duration: 20 });
+                if (!this.isVirtualWorld) {
+                    this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe((heading: number) => {
+                        requestAnimationFrame(() => {
+                            this.map.rotateTo(heading, { duration: 20 });
+                        });
                     });
-                });
+                } else {
+                    // VR world
+                    this.avatarOrientationSubscription = this.orientationService.avatarOrientationSubscription.subscribe(avatarHeading => {
+                        requestAnimationFrame(() => {
+                            this.map.rotateTo(avatarHeading, { duration: 20 });
+                        });
+                    });
+                }
                 break;
             case RotationType.Button:
 
@@ -73,6 +91,8 @@ export class RotationControl {
     public remove(): void {
         if (this.deviceOrientationSubscription != undefined) {
             this.deviceOrientationSubscription.unsubscribe();
+        } else if (this.avatarOrientationSubscription != undefined){
+            this.avatarOrientationSubscription.unsubscribe();
         }
     }
 }

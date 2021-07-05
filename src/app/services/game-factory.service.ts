@@ -76,7 +76,7 @@ export class GameFactoryService {
       if (val != undefined) {
         this.game = val;
       } else if (!this.game) {
-        this.game = new Game(0, "", "", true, [], undefined, false, false);
+        this.game = new Game(0, "", "", true, [], undefined, false, false, false, false);
         this.storage.set("game", this.game);
       }
       return this.game;

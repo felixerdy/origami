@@ -15,6 +15,10 @@ export class AnswerTypeComponent implements OnInit, OnChanges {
     @Input() answer: any;
     @Input() taskType: any;
 
+    // VR world
+    @Input() isVirtualWorld: boolean;
+    @Input() isVRMirrored: boolean;
+
     @Output() answerChange: EventEmitter<any> = new EventEmitter<any>(true);
 
     answerTypeEnum = AnswerType;

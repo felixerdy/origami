@@ -9,6 +9,10 @@ import { Subscription } from 'rxjs';
 import { FilesystemDirectory, FilesystemEncoding } from '@capacitor/core';
 import { OrigamiOrientationService } from './origami-orientation.service';
 
+// VR world
+import { AvatarPosition } from 'src/app/models/avatarPosition'
+import { Coords } from 'src/app/models/coords'
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,6 +32,15 @@ export class TrackerService {
   private deviceOrientationSubscription: Subscription;
   private compassHeading: number;
 
+  // VR World
+  private avatarcoords: Coords;
+  private avatarPosition: AvatarPosition;
+  private avatarPositionWatch: Subscription;
+  isVirtualWorld: boolean = false;
+  private avatarOrientationSubscription: Subscription;
+  initialAvatarLoc: any;
+
+
   private map: any;
 
   private task: any;
@@ -41,32 +54,67 @@ export class TrackerService {
     private http: HttpClient,
     private geolocateService: OrigamiGeolocationService,
     private orientationService: OrigamiOrientationService
-  ) {}
+  ) { }
 
-  async init(gameID, name, map: any, players: string[]) {
-    this.positionWatch = this.geolocateService.geolocationSubscription.subscribe(
-      (position) => {
-        this.position = position;
-      }
-    );
+  async init(gameID, name, map: any, players: string[], isVirtualWorld: boolean, initialAvatarLoc: any) {
 
-    this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe(
-      (heading: number) => {
-        if (this.lastHeading === undefined) {
-          this.lastHeading = heading;
+    this.isVirtualWorld = isVirtualWorld;
+    this.initialAvatarLoc = initialAvatarLoc;
+
+    if (!isVirtualWorld) {
+      this.positionWatch = this.geolocateService.geolocationSubscription.subscribe(
+        (position) => {
+          this.position = position;
         }
+      );
 
-        let diff = Math.abs(this.lastHeading - heading);
-        diff = Math.abs(((diff + 180) % 360) - 180);
-        if (diff > 15) {
-          this.rotationCounter += diff;
-          this.lastHeading = heading;
+      this.deviceOrientationSubscription = this.orientationService.orientationSubscription.subscribe(
+        (heading: number) => {
+          if (this.lastHeading === undefined) {
+            this.lastHeading = heading;
+          }
+
+          let diff = Math.abs(this.lastHeading - heading);
+          diff = Math.abs(((diff + 180) % 360) - 180);
+          if (diff > 15) {
+            this.rotationCounter += diff;
+            this.lastHeading = heading;
+          }
+
+          this.compassHeading = heading;
         }
+      );
 
-        this.compassHeading = heading;
-      }
-    );
+    } else {
+      // ** VR world ** //
+      this.avatarPositionWatch = this.geolocateService.avatarGeolocationSubscription.subscribe(avatarPosition => {
+        // Set timestamp (to do: timestamp)
+        if (this.avatarPosition === undefined) {
+          // Initial avatar position
+          this.avatarPosition = new AvatarPosition(0, new Coords(this.initialAvatarLoc.lat, this.initialAvatarLoc.lng));
+        } else {
+          this.avatarPosition = new AvatarPosition(0, new Coords(parseFloat(avatarPosition["z"]) / 111200, parseFloat(avatarPosition["x"]) / 111000));
+        }
+      });
 
+
+      this.avatarOrientationSubscription = this.orientationService.avatarOrientationSubscription.subscribe(
+        (avatarHeading: number) => {
+          if (this.lastHeading === undefined) {
+            this.lastHeading = avatarHeading;
+          }
+
+          let diff = Math.abs(this.lastHeading - avatarHeading);
+          diff = Math.abs(((diff + 180) % 360) - 180);
+          if (diff > 15) {
+            this.rotationCounter += diff;
+            this.lastHeading = avatarHeading;
+          }
+
+          this.compassHeading = avatarHeading;
+        }
+      );
+    }
     this.map = map;
     this.map.on('moveend', (moveEvent) => {
       if (moveEvent.type == 'moveend' && moveEvent.originalEvent) {
@@ -91,8 +139,13 @@ export class TrackerService {
   }
 
   clear() {
-    this.deviceOrientationSubscription.unsubscribe();
-    this.positionWatch.unsubscribe();
+    if (!this.isVirtualWorld) {
+      this.positionWatch.unsubscribe();
+      this.deviceOrientationSubscription.unsubscribe();
+    } else {
+      this.avatarPositionWatch.unsubscribe();
+      this.avatarOrientationSubscription.unsubscribe();
+    }
   }
 
   setTask(task) {
@@ -107,7 +160,7 @@ export class TrackerService {
       this.waypoints.push({
         ...waypoint,
         timestamp: new Date().toISOString(),
-        position: this.position,
+        position: (this.isVirtualWorld ? this.avatarPosition : this.position),
         mapViewport: {
           bounds: this.map.getBounds(),
           center: this.map.getCenter(),
@@ -129,7 +182,7 @@ export class TrackerService {
     this.events.push({
       ...event,
       timestamp: new Date().toISOString(),
-      position: this.position,
+      position: (this.isVirtualWorld ? this.avatarPosition : this.position),
       mapViewport: {
         bounds: this.map.getBounds(),
         center: this.map.getCenter(),
@@ -175,8 +228,14 @@ export class TrackerService {
     console.log(data);
 
     // Plugins.Geolocation.clearWatch({ id: this.positionWatch });
-    this.deviceOrientationSubscription.unsubscribe();
-    this.positionWatch.unsubscribe();
+    if (!this.isVirtualWorld) {
+      this.deviceOrientationSubscription.unsubscribe();
+      this.positionWatch.unsubscribe();
+    } else {
+      this.avatarOrientationSubscription.unsubscribe();
+      this.avatarPositionWatch.unsubscribe();
+    }
+
 
     try {
       const ret = await Plugins.Filesystem.mkdir({
@@ -191,9 +250,8 @@ export class TrackerService {
 
     try {
       const result = await Plugins.Filesystem.writeFile({
-        path: `origami/tracks/${this.gameName.replace(/ /g, '_')}-${
-          this.start
-        }.json`,
+        path: `origami/tracks/${this.gameName.replace(/ /g, '_')}-${this.start
+          }.json`,
         data: JSON.stringify(data),
         directory: FilesystemDirectory.Documents,
         encoding: FilesystemEncoding.UTF8,

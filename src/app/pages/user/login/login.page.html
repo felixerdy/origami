@@ -20,30 +20,17 @@
     </ion-card>
     <br />
     <form (ngSubmit)="login()" [formGroup]="loginForm">
-      <ion-input
-        placeholder="Benutzername oder E-Mail"
-        [id]="'username'"
-        formControlName="username"
-      ></ion-input>
+      <ion-input placeholder="Benutzername oder E-Mail" [id]="'username'" formControlName="username"></ion-input>
       <br />
-      <ion-input
-        type="password"
-        placeholder="Password"
-        [id]="'password'"
-        formControlName="password"
-      ></ion-input>
+      <ion-input type="password" placeholder="Password" [id]="'password'" formControlName="password"></ion-input>
       <br />
-      <ion-button expand="block" type="submit" [disabled]="loginForm.invalid"
-        ><ion-spinner *ngIf="loading"></ion-spinner> Login</ion-button
-      >
+      <ion-button expand="block" type="submit" [disabled]="loginForm.invalid">
+        <ion-spinner *ngIf="loading"></ion-spinner> Login
+      </ion-button>
       <br />
-      <ion-button fill="outline" expand="block" (click)="navigateRegister()"
-        >Registrieren</ion-button
-      >
+      <ion-button fill="outline" expand="block" (click)="navigateRegister()">Registrieren</ion-button>
       <br />
-      <ion-button fill="clear" expand="block" (click)="navigateForgotPassword()"
-        >Passwort vergessen</ion-button
-      >
+      <ion-button fill="clear" expand="block" (click)="navigateForgotPassword()">Passwort vergessen</ion-button>
     </form>
     <br />
   </div>

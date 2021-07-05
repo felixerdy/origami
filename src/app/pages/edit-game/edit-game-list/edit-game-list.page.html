@@ -16,7 +16,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-card *ngFor="let game of games" (click)="gameClick(game)" detail color="secondary">
+  <ion-card *ngFor="let game of games" (click)="gameClick(game)" detail color="secondary" >
     <ion-card-header>
       <ion-label>
         <h2><span *ngIf="game.place">{{ game.place }} - </span>{{ game.name }}</h2>

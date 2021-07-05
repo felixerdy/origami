@@ -25,14 +25,28 @@ export class StartPage implements OnInit {
 
   user = this.authService.getUser();
 
+  // Vr world
+  // to only allow admins to see pages related to VR games
+  userRole: String;
+
+
   constructor(
     public navCtrl: NavController,
     public toastController: ToastController,
     private _translate: TranslateService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   async ngOnInit() {
+
+    // Get user role
+    this.user.subscribe(
+      event => {
+        if (event != null) {
+          this.userRole = (event['roles'])[0];
+        }
+      });
+
     this._translate.setDefaultLang('de');
     this._initialiseTranslation();
 
@@ -65,11 +79,26 @@ export class StartPage implements OnInit {
   }
 
   navigateGamesOverviewPage() {
-    this.navCtrl.navigateForward('play-game/play-game-list');
+    //this.navCtrl.navigateForward('play-game/play-game-list');
+
+    if (this.userRole != undefined && this.userRole == "admin") {
+      this.navCtrl.navigateForward('play-game/play-game-menu');
+    } else {
+      this.navCtrl.navigateForward(`play-game/play-game-list/${"RealWorld"}`);
+    }
+
+
+
   }
 
   navigateCreatePage() {
-    this.navCtrl.navigateForward('create-game');
+    this.navCtrl.navigateForward('create-game-menu');
+
+    if (this.userRole != undefined && this.userRole == "admin") {
+      this.navCtrl.navigateForward('create-game-menu');
+    } else {
+      this.navCtrl.navigateForward('create-game');
+    }
   }
 
   navigateShowroomPage() {

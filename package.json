@@ -62,9 +62,11 @@
     "ngx-json-viewer": "^2.4.0",
     "ngx-lottie": "^5.4.0",
     "ngx-markdown": "^10.1.1",
+    "ngx-socket-io": "^3.3.1",
     "osmtogeojson": "^3.0.0-beta.3",
     "pwa": "^1.9.7",
     "rxjs": "~6.5.5",
+    "rxjs-compat": "^6.6.7",
     "source-map": "^0.8.0-beta.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

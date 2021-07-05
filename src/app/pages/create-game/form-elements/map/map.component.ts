@@ -24,6 +24,7 @@ import { searchArea } from './drawThemes';
 import { HelperService } from 'src/app/services/helper.service';
 import { SatControl } from './SatControl/SatControl';
 
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-map',
@@ -44,6 +45,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
   @Input() markerType: string;
 
   @Input() drawTheme: string;
+
+  // VR world
+  @Input() isVirtualWorld: boolean;
+  @Input() isVRMirrored: boolean;
 
   showDirectionMarker = false;
   directionMarkerPosition: any;
@@ -113,50 +118,170 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy
     mapboxgl.accessToken =
       'pk.eyJ1IjoiZmVsaXhhZXRlbSIsImEiOiI2MmE4YmQ4YjIzOTI2YjY3ZWFmNzUwOTU5NzliOTAxOCJ9.nshlehFGmK_6YmZarM2SHA';
 
-    this.map = new mapboxgl.Map({
-      container: this.mapContainer.nativeElement,
-      style: {
-        version: 8,
-        metadata: {
-          'mapbox:autocomposite': true,
-          'mapbox:type': 'template'
+    // VR world style start
+    let virtualWorldMapStyle = {
+      'version': 8,
+      'name': 'Dark',
+      'sources': {
+        'mapbox': {
+          'type': 'vector',
+          'url': 'mapbox://mapbox.mapbox-streets-v8'
         },
-        sources: {
-          'raster-tiles': {
-            type: 'raster',
-            tiles: [
-              'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
-            ],
-            tileSize: 256,
+        'overlay':
+        {
+          'type': 'image',
+          'url': (this.isVRMirrored ? environment.VR_Version_B: environment.VR_Version_A), // V4
+          'coordinates': [
+            [0.0002307207207, 0.004459082914], // NW
+            [0.003717027207, 0.004459082914], // NE 
+            [0.003717027207, 0.0003628597122], // SE
+            [0.0002307207207, 0.0003628597122] // SW
+          ]
+        }
+
+      },
+      'sprite': 'mapbox://sprites/mapbox/dark-v10',
+      'glyphs': 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf',
+      'layers': [
+        {
+          'id': 'background',
+          'type': 'background',
+          'paint': { 'background-color': '#111' }
+        },
+        {
+          'id': 'water',
+          'source': 'mapbox',
+          'source-layer': 'water',
+          'type': 'fill',
+          'paint': { 'fill-color': '#2c2c2c' }
+        },
+        {
+          'id': 'boundaries',
+          'source': 'mapbox',
+          'source-layer': 'admin',
+          'type': 'line',
+          'paint': {
+            'line-color': '#797979',
+            'line-dasharray': [2, 2, 6, 2]
           },
-          mapbox: {
-            url: 'mapbox://mapbox.mapbox-streets-v7',
-            type: 'vector'
+          'filter': ['all', ['==', 'maritime', 0]]
+        },
+        {
+          'id': 'overlay',
+          'source': 'overlay',
+          'type': 'raster',
+          'paint': { 'raster-opacity': 0.85 }
+        },
+        {
+          'id': 'cities',
+          'source': 'mapbox',
+          'source-layer': 'place_label',
+          'type': 'symbol',
+          'layout': {
+            "visibility": "none",
+            'text-field': '{name_en}',
+            'text-font': ['DIN Offc Pro Bold', 'Arial Unicode MS Bold'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              4,
+              9,
+              6,
+              12
+            ]
+          },
+          'paint': {
+            'text-color': '#969696',
+            'text-halo-width': 2,
+            'text-halo-color': 'rgba(0, 0, 0, 0.85)'
           }
         },
-        layers: [
-          {
-            id: 'simple-tiles',
-            type: 'raster',
-            source: 'raster-tiles',
-            minzoom: 0,
-            maxzoom: 22
+        {
+          'id': 'states',
+          'source': 'mapbox',
+          'source-layer': 'place_label',
+          'type': 'symbol',
+          'layout': {
+            'text-transform': 'uppercase',
+            'text-field': '{name_en}',
+            'text-font': ['DIN Offc Pro Bold', 'Arial Unicode MS Bold'],
+            'text-letter-spacing': 0.15,
+            'text-max-width': 7,
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              4,
+              10,
+              6,
+              14
+            ]
           },
-          {
-            id: 'building',
-            type: 'fill',
-            source: 'mapbox',
-            'source-layer': 'building',
-            paint: {
-              'fill-color': '#d6d6d6',
-              'fill-opacity': 0,
-            },
-            interactive: true
-          },
-        ]
+          'filter': ['==', ['get', 'class'], 'state'],
+          'paint': {
+            'text-color': '#969696',
+            'text-halo-width': 2,
+            'text-halo-color': 'rgba(0, 0, 0, 0.85)'
+          }
+        }
+      ]
+    };
+    // For world  style end
+
+    let realWorldMapStyle = {
+      version: 8,
+      metadata: {
+        'mapbox:autocomposite': true,
+        'mapbox:type': 'template'
       },
-      center: [8, 51.8],
-      zoom: 2,
+      sources: {
+        'raster-tiles': {
+          type: 'raster',
+          tiles: [
+            'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+          ],
+          tileSize: 256,
+        },
+        mapbox: {
+          url: 'mapbox://mapbox.mapbox-streets-v7',
+          type: 'vector'
+        }
+      },
+      layers: [
+        {
+          id: 'simple-tiles',
+          type: 'raster',
+          source: 'raster-tiles',
+          minzoom: 0,
+          maxzoom: 22
+        },
+        {
+          id: 'building',
+          type: 'fill',
+          source: 'mapbox',
+          'source-layer': 'building',
+          paint: {
+            'fill-color': '#d6d6d6',
+            'fill-opacity': 0,
+          },
+          interactive: true
+        },
+      ]
+    };
+
+    // Set bounds of VR world 
+    var bounds = [
+      [0.0002307207207 - 0.004, 0.0003628597122 - 0.004], // Southwest coordinates
+      [0.003717027207 + 0.004, 0.004459082914 + 0.004] // Northeast coordinates
+    ];
+
+    this.map = new mapboxgl.Map({
+      container: this.mapContainer.nativeElement,
+      style: (this.isVirtualWorld ? virtualWorldMapStyle : realWorldMapStyle),
+      center: (this.isVirtualWorld ? [0.005810510811 / 2, 0.006827038669 / 2] : [8, 51.8]),
+      zoom: (this.isVirtualWorld ? 16.5 : 2),
+      maxBounds: (this.isVirtualWorld ? bounds : null) // Sets bounds as max
     });
 
     this.map.addControl(new SatControl());

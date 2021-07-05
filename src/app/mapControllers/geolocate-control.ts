@@ -3,6 +3,9 @@ import { OrigamiGeolocationService } from '../services/origami-geolocation.servi
 import { Plugins, GeolocationPosition } from '@capacitor/core';
 import { Subscription } from 'rxjs';
 
+// VR world
+import { environment } from 'src/environments/environment';
+
 
 export enum GeolocateType {
     None,
@@ -15,21 +18,43 @@ export class GeolocateControl {
     private positionSubscription: Subscription;
     private geolocateType: GeolocateType = GeolocateType.None;
 
+    // VR world
+    isVirtualWorld: boolean = false;
+    initialAvatarLoc: any;
+    private avatarPositionSubscription: Subscription;
+
     private map: MapboxMap;
 
     private isInitalized = false;
 
-    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService) {
+    constructor(map: MapboxMap, private geolocationService: OrigamiGeolocationService, isVirtualWorld: boolean, initialAvatarLoc: any) {
         this.map = map;
 
-        this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(position => {
-            if (this.map && this.map.getLayer('geolocate')) {
-                this.map.getSource('geolocate').setData({
-                    type: 'Point',
-                    coordinates: [position.coords.longitude, position.coords.latitude]
-                });
-            }
-        });
+        // VR world (to check type of the game)
+        this.isVirtualWorld = isVirtualWorld;
+        this.initialAvatarLoc = initialAvatarLoc;
+
+        if (!isVirtualWorld) {
+            this.positionSubscription = this.geolocationService.geolocationSubscription.subscribe(position => {
+                if (this.map && this.map.getLayer('geolocate')) {
+                    this.map.getSource('geolocate').setData({
+                        type: 'Point',
+                        coordinates: [position.coords.longitude, position.coords.latitude]
+                    });
+                }
+            });
+        } else {
+            // VR world
+            this.avatarPositionSubscription = this.geolocationService.avatarGeolocationSubscription.subscribe(avatarPosition => {
+                if (this.map && this.map.getLayer('geolocate')) {
+                    this.map.getSource('geolocate').setData({
+                        type: 'Point',
+                        coordinates: [parseFloat(avatarPosition["x"]) / 111000, parseFloat(avatarPosition["z"]) / 111200]
+                    });
+                }
+            });
+        }
+
         this.map.loadImage(
             '/assets/icons/position.png',
             (error, image) => {
@@ -41,9 +66,7 @@ export class GeolocateControl {
                     type: 'geojson',
                     data: {
                         type: 'Point',
-                        coordinates: [
-                            0, 0
-                        ]
+                        coordinates: (this.isVirtualWorld ? [this.initialAvatarLoc.lng, this.initialAvatarLoc.lat] : [0, 0])
                     }
                 });
                 this.map.addLayer({
@@ -114,6 +137,11 @@ export class GeolocateControl {
 
     public remove(): void {
         this.reset();
-        this.positionSubscription.unsubscribe();
+        
+        if (!this.isVirtualWorld) {
+            this.positionSubscription.unsubscribe();
+        } else {
+            this.avatarPositionSubscription.unsubscribe();
+        }
     }
 }
